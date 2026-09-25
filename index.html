@@ -15,10 +15,12 @@
             <p class="text-gray-600 mt-2">Apni 12-digit ki CSC ID darj karke apna profile aur branding approval status check karein.</p>
         </div>
 
-        <!-- Search Box -->
+       <!-- Search Box -->
         <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-           <input type="number" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" oninput="if(this.value.length > 12) this.value = this.value.slice(0, 12);"
-    class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg"> 
+            <input type="text" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" inputmode="numeric" 
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+                class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">  
             <button onclick="searchData()" 
                 class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
                 Search Status
