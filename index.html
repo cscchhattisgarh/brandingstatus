@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSC ID Verification Status Portal</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen py-10 px-4">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">CSC ID Verification & Branding Status</h1>
+            <p class="text-gray-600 mt-2">Apni CSC ID darj karke apna profile aur branding approval status check karein.</p>
+        </div>
+
+        <!-- Search Box -->
+        <div class="flex flex-col sm:flex-row gap-3 justify-center mb-8">
+            <input type="text" id="cscIdInput" placeholder="Enter CSC ID (e.g. 533644320018)" 
+                class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">
+            <button onclick="searchData()" 
+                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
+                Search Status
+            </button>
+        </div>
+
+        <!-- Loading / Message area -->
+        <div id="loading" class="text-center text-gray-500 hidden my-4">Data load ho raha hai, kripya pratiksha karein...</div>
+        <div id="message" class="text-center text-red-600 font-medium my-4"></div>
+
+        <!-- Result Container (Tables) -->
+        <div id="resultContainer" class="hidden space-y-8">
+            
+            <!-- Table 1: Profile Summary -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">1. VLE Profile Summary</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
+                        <thead class="bg-indigo-50 text-indigo-900">
+                            <tr>
+                                <th class="border border-gray-200 px-4 py-3">District</th>
+                                <th class="border border-gray-200 px-4 py-3">CSC ID</th>
+                                <th class="border border-gray-200 px-4 py-3">VLE Name</th>
+                                <th class="border border-gray-200 px-4 py-3">Mobile No</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-white hover:bg-gray-50">
+                                <td id="resDistrict" class="border border-gray-200 px-4 py-3"></td>
+                                <td id="resCscId" class="border border-gray-200 px-4 py-3 font-semibold"></td>
+                                <td id="resVleName" class="border border-gray-200 px-4 py-3"></td>
+                                <td id="resMobile" class="border border-gray-200 px-4 py-3"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Table 2: Branding & Submission Details (Multiple Records Support) -->
+            <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">2. Branding & Verification Records</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
+                        <thead class="bg-gray-50 text-gray-800">
+                            <tr>
+                                <th class="border border-gray-200 px-4 py-3">S.No.</th>
+                                <th class="border border-gray-200 px-4 py-3">Block</th>
+                                <th class="border border-gray-200 px-4 py-3">Latitude, Longitude</th>
+                                <th class="border border-gray-200 px-4 py-3">Photo Link</th>
+                                <th class="border border-gray-200 px-4 py-3">Status / Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recordsTableBody">
+                            <!-- Dynamically populated rows will appear here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvJthmc539JPsbYAhyXBFcIU309meElCT6tMm2ctL37S5SO6SkbafGKqOzhcf1Do4_/exec";
+
+        async function searchData() {
+            const cscId = document.getElementById('cscIdInput').value.trim();
+            const messageDiv = document.getElementById('message');
+            const loadingDiv = document.getElementById('loading');
+            const resultContainer = document.getElementById('resultContainer');
+
+            messageDiv.innerText = "";
+            resultContainer.classList.add('hidden');
+
+            if (!cscId) {
+                messageDiv.innerText = "Kripya valid CSC ID darj karein.";
+                return;
+            }
+
+            loadingDiv.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?cscid=${encodeURIComponent(cscId)}`);
+                const data = await response.json();
+
+                loadingDiv.classList.add('hidden');
+
+                if (data.success && data.profile) {
+                    // Populate Profile Table (Table 1)
+                    document.getElementById('resDistrict').innerText = data.profile.district || "-";
+                    document.getElementById('resCscId').innerText = data.profile.cscId || "-";
+                    document.getElementById('resVleName').innerText = data.profile.vleName || "-";
+                    document.getElementById('resMobile').innerText = data.profile.mobileNo || "-";
+
+                    // Populate Records Table (Table 2 - Multiple Submissions Support)
+                    const tbody = document.getElementById('recordsTableBody');
+                    tbody.innerHTML = "";
+
+                    data.records.forEach((record, index) => {
+                        const row = document.createElement('tr');
+                        row.className = "hover:bg-gray-50";
+
+                        // Status styling (agar Approved hai toh green, nahi toh normal/pending)
+                        let remarkText = record.remark || "PENDING";
+                        let remarkClass = "px-2 py-1 rounded text-sm font-semibold ";
+                        if (remarkText.toLowerCase().includes("approved")) {
+                            remarkClass += "bg-green-100 text-green-800";
+                        } else {
+                            remarkClass += "bg-yellow-100 text-yellow-800";
+                        }
+
+                        // Photo link check
+                        let photoHtml = "-";
+                        if (record.photoLink) {
+                            photoHtml = `<a href="${record.photoLink}" target="_blank" class="text-blue-600 underline hover:text-blue-800 font-medium">View Photo</a>`;
+                        }
+
+                        row.innerHTML = `
+                            <td class="border border-gray-200 px-4 py-3">${index + 1}</td>
+                            <td class="border border-gray-200 px-4 py-3">${record.block || "-"}</td>
+                            <td class="border border-gray-200 px-4 py-3 font-mono text-sm">${record.latLong || "-"}</td>
+                            <td class="border border-gray-200 px-4 py-3">${photoHtml}</td>
+                            <td class="border border-gray-200 px-4 py-3"><span class="${remarkClass}">${remarkText}</span></td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+
+                    resultContainer.classList.remove('hidden');
+                } else {
+                    messageDiv.innerText = "Is CSC ID ka koi record nahi mila ya ID galat hai.";
+                }
+            } catch (error) {
+                loadingDiv.classList.add('hidden');
+                messageDiv.innerText = "Data fetch karne me samasya aayi. Kripya punah prayas karein.";
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+</html>
