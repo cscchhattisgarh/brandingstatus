@@ -21,7 +21,7 @@
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">CSC ID Verification & Branding Portal</h1>
-              </div>
+        </div>
 
         <!-- Navigation Tabs -->
         <div class="flex justify-center border-b border-gray-200 mb-6">
@@ -31,6 +31,17 @@
             <button onclick="switchTab('statusCheck')" id="tabStatusCheck" class="py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200">
                 🔍 2. Branding Approval Status Check
             </button>
+        </div>
+
+        <!-- Download Branding Format Banner/Button -->
+        <div class="mb-6 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between shadow-sm">
+            <div class="mb-3 sm:mb-0 text-center sm:text-left">
+                <h3 class="text-indigo-900 font-bold text-base">🎨 CSC Common Branding Format</h3>
+                <p class="text-gray-600 text-xs mt-0.5">VLEs ke liye official branding banner ka PDF format yahan se download karein.</p>
+            </div>
+            <a href="https://jaankari.csccloud.in/document/Generic-CSC-Common-Branding-Banner-Final.pdf" target="_blank" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-5 py-2.5 rounded-lg shadow transition duration-200 text-sm flex items-center gap-2 whitespace-nowrap">
+                📥 Download Branding PDF
+            </a>
         </div>
 
         <!-- ================= SECTION 1: NEW ENTRY FORM ================= -->
@@ -139,7 +150,7 @@
                         <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-medium px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap">📍 Current Location</button>
                     </div>
                     <p class="text-xs text-gray-500 mt-1.5">
-                        💡 <b>Tip:</b> Aap ya to manual Latitude & Longitude is format me type kare: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location capture karne ke liye <b>'Cuurent Location'</b> button par click kare.
+                        💡 <b>Tip:</b> Aap ya to manual Latitude & Longitude is format me type kare: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location capture karne ke liye <b>'Current Location'</b> button par click kare.
                     </p>
                 </div>
 
@@ -544,7 +555,7 @@
 
             const loader = document.getElementById('fullPageLoader');
             const loaderText = document.getElementById('loaderText');
-            loaderText.innerText = "Photo Upload Ki Ja rhi hai, please wait...";
+            loaderText.innerText = "Saving your data, please wait...";
             loader.classList.remove('hidden');
 
             const cscId = document.getElementById('newCscId').value.trim();
@@ -605,12 +616,12 @@
             .then(data => {
                 loader.classList.add('hidden');
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Entry";
+                submitBtn.innerText = "Submit";
 
                 if (data.success) {
                     formMsg.className = "text-center font-medium mt-3 text-green-600";
-                    formMsg.innerText = "✓ Photo Successfully Upload Ho gyi hai!";
-                    showPopup("Success", data.message || "Aapki branding ki Photo Successfully submit ho gayi hai.", "approved", true, document.getElementById('newCscId').value.trim());
+                    formMsg.innerText = "✓ Entry safaltapurvak jama ho gayi hai!";
+                    showPopup("Success", data.message || "Aapka branding form safaltapurvak submit ho gaya hai.", "approved", true, document.getElementById('newCscId').value.trim());
                     document.getElementById('brandingForm').reset();
                     setFormEnabled(false);
                     document.getElementById('cscLookupMsg').innerText = "Kewal 12 digits ki sankhya darj kare.";
@@ -625,7 +636,7 @@
             .catch(error => {
                 loader.classList.add('hidden');
                 submitBtn.disabled = false;
-                submitBtn.innerText = "Submit Entry";
+                submitBtn.innerText = "Submit";
                 console.error(error);
                 formMsg.className = "text-center font-medium mt-3 text-red-600";
                 formMsg.innerText = "Server connection error.";
@@ -641,7 +652,7 @@
 
             if (cscId.length !== 12) {
                 message.className = "text-center font-medium my-4 text-orange-600";
-                message.innerText = "⚠️ Kripya puri 12-digit ki CSC ID darj kare.";
+                message.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein.";
                 resultContainer.classList.add('hidden');
                 return;
             }
@@ -696,7 +707,7 @@
                     resultContainer.classList.remove('hidden');
                 } else {
                     message.className = "text-center font-medium my-4 text-red-600";
-                    message.innerText = "❌ Is CSC ID ka koi Upload kiya hua Photo nahi mila.";
+                    message.innerText = "❌ Is CSC ID ka koi record nahi mila.";
                 }
             } catch (err) {
                 loading.classList.add('hidden');
