@@ -1,121 +1,668 @@
 <!DOCTYPE html>
-<html>
+<html lang="hi">
 <head>
-  <base target="_top">
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <style>
-    body { background-color: #f8f9fa; padding-top: 30px; }
-    .card { box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CSC ID Verification & Branding Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="container">
-
-  <div class="row justify-content-center">
-    <div class="col-md-8">
-      <div class="card p-4">
-        <h3 class="mb-3 text-center text-primary">CSC ID Status & Record Lookup</h3>
-        <hr>
+<body class="bg-gray-100 min-h-screen py-10 px-4">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 relative">
         
-        <!-- Search Form -->
-        <div class="input-group mb-3">
-          <input type="text" id="cscIdInput" class="form-control" placeholder="CSC ID darj karein (e.g. 123456...)">
-          <button class="btn btn-primary" type="button" id="searchBtn">Search</button>
+        <!-- Center Spinner Modal (CSC ID check & Form Submit dono ke liye) -->
+        <div id="fullPageLoader" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded-2xl shadow-2xl flex flex-col items-center space-y-3">
+                <div class="animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
+                <p id="loaderText" class="text-gray-700 font-semibold text-sm">CSC ID check ki ja rahi hai...</p>
+            </div>
         </div>
 
-        <!-- Loading Spinner -->
-        <div id="loading" class="text-center my-3" style="display: none;">
-          <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
-          </div>
+        <!-- Header -->
+        <div class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">CSC ID Verification & Branding Portal</h1>
+            <p class="text-gray-600 mt-1">Nayi entry karein ya apna approval status check karein.</p>
         </div>
 
-        <!-- Result Container -->
-        <div id="resultContainer" class="mt-3"></div>
-      </div>
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center border-b border-gray-200 mb-6">
+            <button onclick="switchTab('newEntry')" id="tabNewEntry" class="py-2 px-6 font-semibold text-indigo-600 border-b-2 border-indigo-600 focus:outline-none transition duration-200">
+                📝 1. New Entry Form
+            </button>
+            <button onclick="switchTab('statusCheck')" id="tabStatusCheck" class="py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200">
+                🔍 2. Status Check Portal
+            </button>
+        </div>
+
+        <!-- ================= SECTION 1: NEW ENTRY FORM ================= -->
+        <div id="sectionNewEntry" class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">VLE Branding New Entry Form</h2>
+            <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> darj karein. Status check hone ke baad hi baaki fields enable hongi.
+            </p>
+
+            <form id="brandingForm" onsubmit="submitNewEntry(event)" class="space-y-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- 1. CSC ID (Column D) -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-1">CSC ID (12-digit) <span class="text-red-500">*</span></label>
+                        <input type="text" id="newCscId" maxlength="12" inputmode="numeric" required placeholder="Enter 12-digit CSC ID" 
+                            oninput="validateCscId(this)"
+                            onblur="checkExistingCscId(this.value)"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-lg">
+                        <span id="cscLookupMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 12 anko (digits) ki sankhya darj karein.</span>
+                    </div>
+
+                    <!-- 2. District -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">District <span class="text-red-500">*</span></label>
+                        <select id="district" disabled required onchange="loadBlocks()" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
+                            <option value="">Select District</option>
+                            <option value="Balod">Balod</option>
+                            <option value="Baloda Bazar">Baloda Bazar</option>
+                            <option value="Balrampur">Balrampur</option>
+                            <option value="Bastar">Bastar</option>
+                            <option value="Bemetara">Bemetara</option>
+                            <option value="Bijapur">Bijapur</option>
+                            <option value="Bilaspur">Bilaspur</option>
+                            <option value="Dantewada">Dantewada</option>
+                            <option value="Dhamtari">Dhamtari</option>
+                            <option value="Durg">Durg</option>
+                            <option value="Gariaband">Gariaband</option>
+                            <option value="Gaurella-Pendra-Marwahi">Gaurella-Pendra-Marwahi</option>
+                            <option value="Janjgir-Champa">Janjgir-Champa</option>
+                            <option value="Jashpur">Jashpur</option>
+                            <option value="Kabirdham">Kabirdham</option>
+                            <option value="Kanker">Kanker</option>
+                            <option value="Khairagarh-Chhuikhadan-Gandai">Khairagarh-Chhuikhadan-Gandai</option>
+                            <option value="Kondagaon">Kondagaon</option>
+                            <option value="Korba">Korba</option>
+                            <option value="Koriya">Koriya</option>
+                            <option value="Mahasamund">Mahasamund</option>
+                            <option value="Manendragarh-Chirmiri-Bharatpur">Manendragarh-Chirmiri-Bharatpur</option>
+                            <option value="Mohla-Manpur-Ambagarh Chowki">Mohla-Manpur-Ambagarh Chowki</option>
+                            <option value="Mungeli">Mungeli</option>
+                            <option value="Narayanpur">Narayanpur</option>
+                            <option value="Raigarh">Raigarh</option>
+                            <option value="Raipur">Raipur</option>
+                            <option value="Rajnandgaon">Rajnandgaon</option>
+                            <option value="Sakti">Sakti</option>
+                            <option value="Sarangarh-Bilaigarh">Sarangarh-Bilaigarh</option>
+                            <option value="Sukma">Sukma</option>
+                            <option value="Surajpur">Surajpur</option>
+                            <option value="Surguja">Surguja</option>
+                        </select>
+                    </div>
+
+                    <!-- 3. Block -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Block <span class="text-red-500">*</span></label>
+                        <select id="block" disabled required class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
+                            <option value="">Pehle CSC ID Darj Karein</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. VLE Name -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">VLE Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="vleName" disabled required placeholder="Enter Full Name" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
+                    </div>
+
+                    <!-- 5. Mobile No -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Mobile No <span class="text-red-500">*</span></label>
+                        <input type="text" id="mobileNo" disabled maxlength="10" inputmode="numeric" required placeholder="10-digit Mobile Number"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
+                    </div>
+
+                    <!-- 6. Photo Upload -->
+                    <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <label class="block text-gray-700 font-medium mb-1">जेनेरिक ब्रांडिंग फोटो (Browse & Upload) <span class="text-red-500">*</span></label>
+                        <input type="file" id="photoFile" disabled accept="image/*" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed text-sm focus:outline-none">
+                        <div id="existingPhotoContainer" class="mt-2 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- 7. Address -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">पूरा पता लैंड Marks के साथ (Full Address & Landmark) <span class="text-red-500">*</span></label>
+                    <textarea id="address" rows="2" disabled required placeholder="Dukan ka poora pata aur landmark likhein" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"></textarea>
+                </div>
+
+                <!-- 8 & 9. Lat & Long -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Google Map Location (Latitude & Longitude) <span class="text-red-500">*</span></label>
+                    <div class="flex gap-2">
+                        <input type="text" id="latLong" disabled required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none font-mono text-sm">
+                        <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-medium px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap">📍 Get Location</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1.5">
+                        💡 <b>Tip:</b> Aap ya toh manual Latitude & Longitude is format me type karein: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location lene ke liye <b>'Get Location'</b> button par click karein.
+                    </p>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="text-center pt-4">
+                    <button type="submit" id="submitBtn" disabled class="bg-gray-400 cursor-not-allowed text-white font-semibold px-8 py-3 rounded-lg shadow-md transition duration-200">
+                        Submit Entry
+                    </button>
+                    <p id="validationWarning" class="text-red-600 font-semibold text-sm mt-2 hidden"></p>
+                </div>
+            </form>
+            <div id="formMessage" class="text-center font-medium mt-3"></div>
+        </div>
+
+        <!-- ================= STATUS POPUP MODAL ================= -->
+        <div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
+                <div id="popupIcon" class="text-5xl">ℹ️</div>
+                <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
+                <p id="popupMessage" class="text-gray-600 text-sm"></p>
+                
+                <div id="popupButtons" class="flex justify-center gap-3 pt-2"></div>
+            </div>
+        </div>
+
+        <!-- ================= SECTION 2: STATUS CHECK PORTAL ================= -->
+        <div id="sectionStatusCheck" class="hidden space-y-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Check Your Branding Status</h2>
+            <p class="text-gray-600 text-sm mb-4">Apni 12-digit ki CSC ID darj karke apna profile aur status check karein.</p>
+            
+            <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+                <input type="text" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" inputmode="numeric" 
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">  
+                <button onclick="searchData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
+                    Search Status
+                </button>
+            </div>
+
+            <div id="loading" class="hidden text-center my-6">
+                <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
+                <p class="text-gray-600 mt-2 font-medium">Data load ho raha hai...</p>
+            </div>
+
+            <div id="message" class="text-center font-medium my-4"></div>
+
+            <div id="resultContainer" class="hidden space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">Profile Summary</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
+                            <thead class="bg-indigo-50 text-indigo-900">
+                                <tr>
+                                    <th class="border border-gray-200 px-4 py-3">District</th>
+                                    <th class="border border-gray-200 px-4 py-3">CSC ID</th>
+                                    <th class="border border-gray-200 px-4 py-3">VLE Name</th>
+                                    <th class="border border-gray-200 px-4 py-3">Mobile No</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white">
+                                    <td id="resDistrict" class="border border-gray-200 px-4 py-3"></td>
+                                    <td id="resCscId" class="border border-gray-200 px-4 py-3 font-semibold"></td>
+                                    <td id="resVleName" class="border border-gray-200 px-4 py-3"></td>
+                                    <td id="resMobile" class="border border-gray-200 px-4 py-3"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">Branding Records</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
+                            <thead class="bg-gray-50 text-gray-800">
+                                <tr>
+                                    <th class="border border-gray-200 px-4 py-3">S.No.</th>
+                                    <th class="border border-gray-200 px-4 py-3">Date & Time</th>
+                                    <th class="border border-gray-200 px-4 py-3">Block</th>
+                                    <th class="border border-gray-200 px-4 py-3">Map Location</th>
+                                    <th class="border border-gray-200 px-4 py-3">Photo Link</th>
+                                    <th class="border border-gray-200 px-4 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-  </div>
 
-  <script>
-    // ⚠️ IMPORTANT: Yahan apna deployed Google Apps Script Web App URL daalein agar ye Web App ki tarah run ho raha hai, 
-    // ya agar ye google.script.run se chal raha hai toh niche fetch ki jagah wo use hoga.
-    // Niche hum direct Web App URL fetch method use kar rahe hain jo aapke doGet(e) se match karta hai.
-    
-    const WEB_APP_URL = "Aapka_Web_App_URL_Yahan_Paste_Karein"; // Agar URL nahi hai toh niche alternative code dekhein
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCIVhYltXttOFEVta3MGprydflFx1yosaEYgYB7ujuaBsd5s7zNnnPAhFeSc2F4gYz/exec";
 
-    document.addEventListener('DOMContentLoaded', function() {
-      const inputField = document.getElementById('cscIdInput');
-      const searchButton = document.getElementById('searchBtn');
-      const resultDiv = document.getElementById('resultContainer');
-      const loadingDiv = document.getElementById('loading');
+        const blockData = {
+            "Balod": ["Balod", "Daundi", "Daundi Lohara", "Gunderdehi", "Gurur"],
+            "Baloda Bazar": ["Baloda Bazar", "Bhatapara", "Kasdol", "Palari", "Simga", "Tilda (Part)"],
+            "Balrampur": ["Balrampur", "Ramanujganj", "Wadrafnagar", "Kusmi", "Shankargarh", "Rajpur"],
+            "Bastar": ["Bastar", "Bastanar", "Darbha", "Jagdalpur", "Lohandiguda", "Tokapal"],
+            "Bemetara": ["Bemetara", "Berla", "Nawagarh", "Saja"],
+            "Bijapur": ["Bijapur", "Bhairamgarh", "Bhopalpatnam", "Usoor"],
+            "Bilaspur": ["Bilaspur", "Bilha", "Kota", "Masturi", "Takhatpur"],
+            "Dantewada": ["Dantewada", "Geedam", "Kwakonda", "Kuwakonda"],
+            "Dhamtari": ["Dhamtari", "Magarlod", "Nagri", "Kurud"],
+            "Durg": ["Durg", "Bhilai", "Patan", "Jamul"],
+            "Gariaband": ["Gariaband", "Chhura", "Deobhog", "Mainpur", "Rajim"],
+            "Gaurella-Pendra-Marwahi": ["Gaurella", "Pendra", "Marwahi"],
+            "Janjgir-Champa": ["Akaltaru", "Bamhnidih", "Baloda", "Dabhra", "Janjgir", "Nawagarh", "Paltan"],
+            "Jashpur": ["Jashpur", "Bagbahara", "Duldula", "Kansabel", "Manora", "Pathalgaon", "Farsabahar"],
+            "Kabirdham": ["Kawardha", "Bodla", "Sahaspur Lohara", "Pandariya"],
+            "Kanker": ["Antagarh", "Bhanupratappur", "Charama", "Durgkondal", "Kanker", "Koyalibeda"],
+            "Khairagarh-Chhuikhadan-Gandai": ["Chhuikhadan", "Gandai", "Khairagarh"],
+            "Kondagaon": ["Bakeswar", "Kondagaon", "Makdi", "Pharasgaon", "Keshkal"],
+            "Korba": ["Katghora", "Korba", "Pali", "Kartala", "Podi Uproda"],
+            "Koriya": ["Baikunthpur", "Bharatpur", "Sonhat"],
+            "Mahasamund": ["Bagbahara", "Basna", "Mahasamund", "Pithora", "Saraipali"],
+            "Manendragarh-Chirmiri-Bharatpur": ["Manendragarh", "Chirmiri", "Bharatpur"],
+            "Mohla-Manpur-Ambagarh Chowki": ["Ambagarh Chowki", "Manpur", "Mohla"],
+            "Mungeli": ["Lormi", "Mungeli", "Pathariya"],
+            "Narayanpur": ["Narayanpur", "Orchha"],
+            "Raigarh": ["Baramkela", "Dharamjaigarh", "Gharghoda", "Lailunga", "Pussore", "Raigarh"],
+            "Raipur": ["Abhanpur", "Arang", "Dharsiwa", "Tilda", "Raipur Rural", "Raipur Urban"],
+            "Rajnandgaon": ["Chhuriya", "Dongargaon", "Dongargarh", "Rajnandgaon"],
+            "Sakti": ["Dabhra", "Jaijaipur", "Malkharoda", "Sakti"],
+            "Sarangarh-Bilaigarh": ["Baramkela", "Bilaigarh", "Sarangarh"],
+            "Sukma": ["Chhindgarh", "KontaSukma", "Konta"],
+            "Surajpur": ["Bhaiyathan", "Odagi", "Pratappur", "Premnagar", "Ramanujnagar", "Surajpur"],
+            "Surguja": ["Ambikapur", "Batauli", "Darima", "Lakhanpur", "Lundra", "Mainpat", "Sitapur"]
+        };
 
-      function performSearch() {
-        const cscId = inputField.value.trim();
-        if (!cscId) {
-          alert('Kripya pehle CSC ID darj karein!');
-          inputField.focus();
-          return;
-        }
+        function loadBlocks() {
+            const districtSelect = document.getElementById('district');
+            const blockSelect = document.getElementById('block');
+            const selectedDistrict = districtSelect.value;
 
-        loadingDiv.style.display = 'block';
-        resultDiv.innerHTML = '';
-
-        // Agar aap Google Apps Script ke inside HTML service se run kar rahe hain aur Code.gs ke functions direct call karne hain:
-        // Yahan hum google.script.run ka use karke direct backend function bhi call kar sakte hain bina Web App URL ke.
-        
-        // Alternative & Direct approach using google.script.run (Aapke Code.gs me lookup logic likhne ki zaroorat padegi, 
-        // ya agar aapne doGet banaya hai toh fetch use hoga. Niche fetch ka standard tarika hai):
-        
-        // NOTE: Agar aapka script as a Web App deployed hai toh fetch use hoga:
-        const targetUrl = `${WEB_APP_URL}?action=lookup&cscid=${encodeURIComponent(cscId)}`;
-
-        fetch(targetUrl)
-          .then(response => response.json())
-          .then(data => {
-            loadingDiv.style.display = 'none';
-            if (data.success) {
-              let html = `<div class="alert alert-success"><h5>VLE Profile Found</h5>
-                          <p><b>Name:</b> ${data.profile.vleName}</p>
-                          <p><b>District:</b> ${data.profile.district}</p>
-                          <p><b>Mobile:</b> ${data.profile.mobileNo}</p></div>`;
-              
-              if(data.records && data.records.length > 0) {
-                html += `<h5 class="mt-3">Records History</h5><table class="table table-bordered table-striped">
-                         <thead><tr><th>Date</th><th>Block</th><th>Remark</th><th>Photo</th></tr></thead><tbody>`;
-                data.records.forEach(rec => {
-                  html += `<tr>
-                            <td>${rec.date}</td>
-                            <td>${rec.block}</td>
-                            <td>${rec.remark}</td>
-                            <td>${rec.photoLink ? `<a href="${rec.photoLink}" target="_blank">View</a>` : ''}</td>
-                           </tr>`;
+            blockSelect.innerHTML = '<option value="">Select Block</option>';
+            if (selectedDistrict && blockData[selectedDistrict]) {
+                blockData[selectedDistrict].forEach(block => {
+                    const option = document.createElement('option');
+                    option.value = block;
+                    option.textContent = block;
+                    blockSelect.appendChild(option);
                 });
-                html += `</tbody></table>`;
-              }
-              resultDiv.innerHTML = html;
-            } else {
-              resultDiv.innerHTML = `<div class="alert alert-warning">Is CSC ID se koi record nahi mila.</div>`;
             }
-          })
-          .catch(error => {
-            loadingDiv.style.display = 'none';
-            resultDiv.innerHTML = `<div class="alert alert-danger">Error: ${error.message}</div>`;
-          });
-      }
-
-      // 1. Button Click Event
-      searchButton.addEventListener('click', performSearch);
-
-      // 2. Input Field Keydown Event (Enter Key Support Fixed!)
-      inputField.addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-          event.preventDefault(); // Page reload hone se rokne ke liye
-          performSearch();
         }
-      });
-    });
-  </script>
+
+        function switchTab(tab) {
+            const secNew = document.getElementById('sectionNewEntry');
+            const secStatus = document.getElementById('sectionStatusCheck');
+            const tabNew = document.getElementById('tabNewEntry');
+            const tabStatus = document.getElementById('tabStatusCheck');
+
+            if (tab === 'newEntry') {
+                secNew.classList.remove('hidden');
+                secStatus.classList.add('hidden');
+                tabNew.className = "py-2 px-6 font-semibold text-indigo-600 border-b-2 border-indigo-600 focus:outline-none transition duration-200";
+                tabStatus.className = "py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200";
+            } else {
+                secNew.classList.add('hidden');
+                secStatus.classList.remove('hidden');
+                tabStatus.className = "py-2 px-6 font-semibold text-indigo-600 border-b-2 border-indigo-600 focus:outline-none transition duration-200";
+                tabNew.className = "py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200";
+            }
+        }
+
+        function validateCscId(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            const msg = document.getElementById('cscLookupMsg');
+            if (input.value.length > 0 && input.value.length < 12) {
+                msg.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein (" + input.value.length + "/12)";
+                msg.className = "text-xs font-medium block mt-1 text-orange-600";
+                setFormEnabled(false);
+            } else if (input.value.length === 12) {
+                msg.innerText = "✓ 12-digit CSC ID valid hai.";
+                msg.className = "text-xs font-medium block mt-1 text-green-600";
+            } else {
+                msg.innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
+                msg.className = "text-xs font-medium block mt-1 text-gray-500";
+                setFormEnabled(false);
+            }
+        }
+
+        function setFormEnabled(enable) {
+            const fields = ['district', 'block', 'vleName', 'mobileNo', 'photoFile', 'address', 'latLong', 'locBtn'];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = !enable;
+                    if (enable) {
+                        el.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                        el.classList.add('bg-white');
+                    } else {
+                        el.classList.add('bg-gray-100', 'cursor-not-allowed');
+                        el.classList.remove('bg-white');
+                    }
+                }
+            });
+
+            const submitBtn = document.getElementById('submitBtn');
+            if (enable) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                submitBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            }
+        }
+
+        function showPopup(title, message, iconType = 'info', showStatusBtn = false, cscId = "") {
+            const popup = document.getElementById('statusPopup');
+            const titleEl = document.getElementById('popupTitle');
+            const msgEl = document.getElementById('popupMessage');
+            const iconEl = document.getElementById('popupIcon');
+            const btnContainer = document.getElementById('popupButtons');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            
+            if (iconType === 'approved') {
+                iconEl.innerText = "✅";
+            } else if (iconType === 'pending') {
+                iconEl.innerText = "⏳";
+            } else if (iconType === 'rejected') {
+                iconEl.innerText = "❌";
+            } else {
+                iconEl.innerText = "ℹ️";
+            }
+
+            btnContainer.innerHTML = "";
+
+            if (showStatusBtn) {
+                const statusBtn = document.createElement('button');
+                statusBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm";
+                statusBtn.innerText = "🔍 Status Check Karein";
+                statusBtn.onclick = function() {
+                    closePopup();
+                    switchTab('statusCheck');
+                    document.getElementById('cscIdInput').value = cscId;
+                    searchData();
+                };
+                btnContainer.appendChild(statusBtn);
+            }
+
+            const okBtn = document.createElement('button');
+            okBtn.className = "bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition text-sm";
+            okBtn.innerText = "Theek Hai (OK)";
+            okBtn.onclick = closePopup;
+            btnContainer.appendChild(okBtn);
+
+            popup.classList.remove('hidden');
+        }
+
+        function closePopup() {
+            document.getElementById('statusPopup').classList.add('hidden');
+        }
+
+        function getLocation() {
+            const latLongInput = document.getElementById('latLong');
+            if (navigator.geolocation) {
+                latLongInput.value = "Location fetch ho rahi hai...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        latLongInput.value = `${position.coords.latitude}, ${position.coords.longitude}`;
+                    },
+                    (error) => {
+                        latLongInput.value = "";
+                        alert("Location access nahi mili. Format use karein: 21.2514, 81.6296");
+                    }
+                );
+            } else {
+                alert("Browser Geolocation support nahi karta.");
+            }
+        }
+
+        async function checkExistingCscId(cscId) {
+            if (!cscId || cscId.length !== 12) return;
+            
+            const loader = document.getElementById('fullPageLoader');
+            const loaderText = document.getElementById('loaderText');
+            const warningBox = document.getElementById('validationWarning');
+            
+            loaderText.innerText = "CSC ID check ki ja rahi hai...";
+            loader.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=check&cscid=${encodeURIComponent(cscId)}`);
+                const res = await response.json();
+                loader.classList.add('hidden');
+
+                if (res.exists) {
+                    const remarkL = (res.remarkL || "").toUpperCase();
+
+                    if (remarkL.includes("REJECT")) {
+                        setFormEnabled(true);
+                        
+                        const districtSelect = document.getElementById('district');
+                        let matchedDistrict = "";
+                        for (let opt of districtSelect.options) {
+                            if (opt.value.toLowerCase() === (res.district || "").toLowerCase()) {
+                                matchedDistrict = opt.value;
+                                break;
+                            }
+                        }
+                        districtSelect.value = matchedDistrict;
+                        
+                        loadBlocks();
+
+                        const blockSelect = document.getElementById('block');
+                        let matchedBlock = "";
+                        for (let opt of blockSelect.options) {
+                            if (opt.value.toLowerCase() === (res.block || "").toLowerCase()) {
+                                matchedBlock = opt.value;
+                                break;
+                            }
+                        }
+                        blockSelect.value = matchedBlock;
+
+                        document.getElementById('vleName').value = res.vleName || "";
+                        document.getElementById('mobileNo').value = res.mobileNo || "";
+                        document.getElementById('address').value = res.address || "";
+                        if(res.lat && res.lon) {
+                            document.getElementById('latLong').value = `${res.lat}, ${res.lon}`;
+                        }
+
+                        const photoContainer = document.getElementById('existingPhotoContainer');
+                        if (res.photoLink) {
+                            photoContainer.innerHTML = `Pichhli Rejected Photo: <a href="${res.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>`;
+                        } else {
+                            photoContainer.innerHTML = "";
+                        }
+
+                        showPopup("Status: Rejected", "Aapka pichhla status Rejected hai. Aap nayi photo aur details daal kar form resubmit kar sakte hain.", "rejected", false);
+                        warningBox.classList.add('hidden');
+                    } else {
+                        setFormEnabled(false);
+                        document.getElementById('district').value = "";
+                        document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Karein</option>';
+                        document.getElementById('vleName').value = "";
+                        document.getElementById('mobileNo').value = "";
+                        document.getElementById('address').value = "";
+                        document.getElementById('latLong').value = "";
+                        document.getElementById('photoFile').value = "";
+                        document.getElementById('existingPhotoContainer').innerHTML = "";
+                        
+                        let iconType = remarkL.includes("APPROV") ? "approved" : "pending";
+                        showPopup("Form Already Filled", "Aapne pehle se form bhar liya hai. Iska status '" + res.remarkL + "' hai.", iconType, true, cscId);
+                        
+                        warningBox.classList.remove('hidden');
+                        warningBox.innerText = "🛑 Entry Blocked: Aapka form pehle se jama hai aur status '" + res.remarkL + "' hai.";
+                    }
+                } else {
+                    setFormEnabled(true);
+                    document.getElementById('district').value = "";
+                    document.getElementById('block').innerHTML = '<option value="">Pehle District Select Karein</option>';
+                    document.getElementById('vleName').value = "";
+                    document.getElementById('mobileNo').value = "";
+                    document.getElementById('address').value = "";
+                    document.getElementById('latLong').value = "";
+                    document.getElementById('photoFile').value = "";
+                    document.getElementById('existingPhotoContainer').innerHTML = "";
+
+                    showPopup("Fresh CSC ID", "Yeh ek nayi CSC ID hai. Aap form bhar sakte hain.", "approved", false);
+                    warningBox.classList.add('hidden');
+                }
+            } catch (err) {
+                loader.classList.add('hidden');
+                console.error(err);
+                showPopup("Error", "CSC ID check karne me samasya aayi.", "info", false);
+            }
+        }
+
+        function submitNewEntry(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const formMsg = document.getElementById('formMessage');
+            const fileInput = document.getElementById('photoFile');
+
+            const latLongVal = document.getElementById('latLong').value.trim();
+            const latLonParts = latLongVal.split(',');
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Submitting...";
+            formMsg.innerText = "";
+
+            // 1. Center Loader Animation dikhayein "Saving your data..." text ke sath
+            const loader = document.getElementById('fullPageLoader');
+            const loaderText = document.getElementById('loaderText');
+            loaderText.innerText = "Saving your data, please wait...";
+            loader.classList.remove('hidden');
+
+            function sendData(base64Data = "", mimeType = "", fileName = "") {
+                const payload = {
+                    cscId: document.getElementById('newCscId').value.trim(),
+                    district: document.getElementById('district').value,
+                    block: document.getElementById('block').value,
+                    vleName: document.getElementById('vleName').value.trim(),
+                    mobileNo: document.getElementById('mobileNo').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    lat: latLonParts[0] ? latLonParts[0].trim() : "",
+                    lon: latLonParts[1] ? latLonParts[1].trim() : "",
+                    fileData: base64Data,
+                    mimeType: mimeType,
+                    fileName: fileName
+                };
+
+                google.script.run
+                    .withSuccessHandler(function(res) {
+                        // Loader hatayein
+                        loader.classList.add('hidden');
+                        
+                        if(res && res.success) {
+                            showPopup("Success", "Aapka data safalpurvak save ho gaya hai!", "approved", false);
+                            
+                            // 2. Form ko pura blank karein
+                            document.getElementById('brandingForm').reset();
+                            document.getElementById('existingPhotoContainer').innerHTML = "";
+                            document.getElementById('cscLookupMsg').innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
+                            document.getElementById('cscLookupMsg').className = "text-xs font-medium block mt-1 text-gray-500";
+
+                            // 3. Form ko wapas non-editable (disabled) kar dein
+                            setFormEnabled(false);
+                            document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Karein</option>';
+                        } else {
+                            alert("Error: " + (res ? res.message : "Unknown error"));
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = "Submit Entry";
+                        }
+                    })
+                    .withFailureHandler(function(err) {
+                        loader.classList.add('hidden');
+                        alert("Server Error: " + err.message);
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "Submit Entry";
+                    })
+                    .saveBrandingEntry(payload);
+            }
+
+            if (fileInput.files && fileInput.files[0]) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64String = e.target.result.split(',')[1];
+                    sendData(base64String, file.type, file.name);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                sendData();
+          }
+        }
+
+        // Status check functions (Aapka original code jaisa tha)
+        async function searchData() {
+            const cscId = document.getElementById('cscIdInput').value.trim();
+            const messageEl = document.getElementById('message');
+            const loadingEl = document.getElementById('loading');
+            const resultContainer = document.getElementById('resultContainer');
+
+            if (cscId.length !== 12) {
+                messageEl.innerText = "Kripya valid 12-digit CSC ID darj karein.";
+                messageEl.className = "text-center font-medium my-4 text-red-600";
+                resultContainer.classList.add('hidden');
+                return;
+            }
+
+            messageEl.innerText = "";
+            loadingEl.classList.remove('hidden');
+            resultContainer.classList.add('hidden');
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=search&cscid=${encodeURIComponent(cscId)}`);
+                const res = await response.json();
+                loadingEl.classList.add('hidden');
+
+                if (res.found) {
+                    document.getElementById('resDistrict').innerText = res.district || "-";
+                    document.getElementById('resCscId').innerText = res.cscId || "-";
+                    document.getElementById('resVleName').innerText = res.vleName || "-";
+                    document.getElementById('resMobile').innerText = res.mobileNo || "-";
+
+                    const tbody = document.getElementById('recordsTableBody');
+                    tbody.innerHTML = "";
+
+                    if (res.records && res.records.length > 0) {
+                        res.records.forEach((rec, index) => {
+                            let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">${rec.status || 'Pending'}</span>`;
+                            const sUpper = (rec.status || "").toUpperCase();
+                            if (sUpper.includes("APPROV")) {
+                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">${rec.status}</span>`;
+                            } else if (sUpper.includes("REJECT")) {
+                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">${rec.status}</span>`;
+                            }
+
+                            const tr = document.createElement('tr');
+                            tr.className = "bg-white border-b hover:bg-gray-50";
+                            tr.innerHTML = `
+                                <td class="border border-gray-200 px-4 py-3">${index + 1}</td>
+                                <td class="border border-gray-200 px-4 py-3">${rec.dateTime || '-'}</td>
+                                <td class="border border-gray-200 px-4 py-3">${rec.block || '-'}</td>
+                                <td class="border border-gray-200 px-4 py-3">${rec.lat && rec.lon ? `<a href="https://maps.google.com/?q=${rec.lat},${rec.lon}" target="_blank" class="text-indigo-600 underline">Map View</a>` : '-'}</td>
+                                <td class="border border-gray-200 px-4 py-3">${rec.photoLink ? `<a href="${rec.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>` : '-'}</td>
+                                <td class="border border-gray-200 px-4 py-3">${statusBadge}</td>
+                            `;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                    resultContainer.classList.remove('hidden');
+                } else {
+                    messageEl.innerText = "Is CSC ID ka koi record nahi mila.";
+                    messageEl.className = "text-center font-medium my-4 text-orange-600";
+                }
+            } catch (err) {
+                loadingEl.classList.add('hidden');
+                messageEl.innerText = "Data load karne me error aayi.";
+                messageEl.className = "text-center font-medium my-4 text-red-600";
+                console.error(err);
+            }
+        }
+    </script>
 </body>
 </html>
