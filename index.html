@@ -21,24 +21,23 @@
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">CSC ID Verification & Branding Portal</h1>
-            <p class="text-gray-600 mt-1">Nayi entry karein ya apna approval status check karein.</p>
-        </div>
+              </div>
 
         <!-- Navigation Tabs -->
         <div class="flex justify-center border-b border-gray-200 mb-6">
             <button onclick="switchTab('newEntry')" id="tabNewEntry" class="py-2 px-6 font-semibold text-indigo-600 border-b-2 border-indigo-600 focus:outline-none transition duration-200">
-                📝 1. New Entry Form
+                📝 1. Branding Photo Uploading Form
             </button>
             <button onclick="switchTab('statusCheck')" id="tabStatusCheck" class="py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200">
-                🔍 2. Status Check Portal
+                🔍 2. Branding Approval Status Check
             </button>
         </div>
 
         <!-- ================= SECTION 1: NEW ENTRY FORM ================= -->
         <div id="sectionNewEntry" class="space-y-4">
-            <h2 class="text-xl font-semibold text-gray-800 mb-2">VLE Branding New Entry Form</h2>
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">VLE Branding Photo Uploading Form</h2>
             <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> darj karein. Status check hone ke baad hi baaki fields enable hongi.
+                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> Enter kare. Status check hone ke baad hi baaki fields enable hongi.
             </p>
 
             <form id="brandingForm" onsubmit="submitNewEntry(event)" class="space-y-4">
@@ -52,7 +51,7 @@
                             oninput="validateCscId(this)"
                             onblur="checkExistingCscId(this.value)"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-lg">
-                        <span id="cscLookupMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 12 anko (digits) ki sankhya darj karein.</span>
+                        <span id="cscLookupMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 12 digits ki sankhya darj kare.</span>
                     </div>
 
                     <!-- 2. District -->
@@ -100,7 +99,7 @@
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">Block <span class="text-red-500">*</span></label>
                         <select id="block" disabled required class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
-                            <option value="">Pehle CSC ID Darj Karein</option>
+                            <option value="">Pehle District Select Kare</option>
                         </select>
                     </div>
 
@@ -129,7 +128,7 @@
                 <!-- 7. Address -->
                 <div>
                     <label class="block text-gray-700 font-medium mb-1">पूरा पता लैंड Marks के साथ (Full Address & Landmark) <span class="text-red-500">*</span></label>
-                    <textarea id="address" rows="2" disabled required placeholder="Dukan ka poora pata aur landmark likhein" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"></textarea>
+                    <textarea id="address" rows="2" disabled required placeholder="Center ka pura pata aur landmark likhe, Jaha ka Verification Karna hai" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"></textarea>
                 </div>
 
                 <!-- 8 & 9. Lat & Long -->
@@ -137,17 +136,17 @@
                     <label class="block text-gray-700 font-medium mb-1">Google Map Location (Latitude & Longitude) <span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
                         <input type="text" id="latLong" disabled required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none font-mono text-sm">
-                        <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-medium px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap">📍 Get Location</button>
+                        <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-medium px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap">📍 Current Location</button>
                     </div>
                     <p class="text-xs text-gray-500 mt-1.5">
-                        💡 <b>Tip:</b> Aap ya toh manual Latitude & Longitude is format me type karein: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location lene ke liye <b>'Get Location'</b> button par click karein.
+                        💡 <b>Tip:</b> Aap ya to manual Latitude & Longitude is format me type kare: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location capture karne ke liye <b>'Cuurent Location'</b> button par click kare.
                     </p>
                 </div>
 
                 <!-- Submit Button -->
                 <div class="text-center pt-4">
                     <button type="submit" id="submitBtn" disabled class="bg-gray-400 cursor-not-allowed text-white font-semibold px-8 py-3 rounded-lg shadow-md transition duration-200">
-                        Submit Entry
+                        Submit
                     </button>
                     <p id="validationWarning" class="text-red-600 font-semibold text-sm mt-2 hidden"></p>
                 </div>
@@ -169,7 +168,7 @@
         <!-- ================= SECTION 2: STATUS CHECK PORTAL ================= -->
         <div id="sectionStatusCheck" class="hidden space-y-6">
             <h2 class="text-xl font-semibold text-gray-800 mb-2">Check Your Branding Status</h2>
-            <p class="text-gray-600 text-sm mb-4">Apni 12-digit ki CSC ID darj karke apna profile aur status check karein.</p>
+            <p class="text-gray-600 text-sm mb-4">Apni 12-digit ki CSC ID darj karke apna profile aur status check kare.</p>
             
             <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
                 <input type="text" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" inputmode="numeric" 
@@ -326,14 +325,14 @@
             input.value = input.value.replace(/[^0-9]/g, '');
             const msg = document.getElementById('cscLookupMsg');
             if (input.value.length > 0 && input.value.length < 12) {
-                msg.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein (" + input.value.length + "/12)";
+                msg.innerText = "⚠️ Kripya puri 12-digit ki CSC ID darj karein (" + input.value.length + "/12)";
                 msg.className = "text-xs font-medium block mt-1 text-orange-600";
                 setFormEnabled(false);
             } else if (input.value.length === 12) {
                 msg.innerText = "✓ 12-digit CSC ID valid hai.";
                 msg.className = "text-xs font-medium block mt-1 text-green-600";
             } else {
-                msg.innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
+                msg.innerText = "Kewal 12 digits ki sankhya darj kare.";
                 msg.className = "text-xs font-medium block mt-1 text-gray-500";
                 setFormEnabled(false);
             }
@@ -392,7 +391,7 @@
             if (showStatusBtn) {
                 const statusBtn = document.createElement('button');
                 statusBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm";
-                statusBtn.innerText = "🔍 Status Check Karein";
+                statusBtn.innerText = "🔍 Status Check Kare";
                 statusBtn.onclick = function() {
                     closePopup();
                     switchTab('statusCheck');
@@ -490,12 +489,12 @@
                             photoContainer.innerHTML = "";
                         }
 
-                        showPopup("Status: Rejected", "Aapka pichhla status Rejected hai. Aap nayi photo aur details daal kar form resubmit kar sakte hain.", "rejected", false);
+                        showPopup("Status: Rejected", "Aapka pichhla Photo Rejected hai. Aap nayi photo aur details daal kar form resubmit kar sakte hain.", "rejected", false);
                         warningBox.classList.add('hidden');
                     } else {
                         setFormEnabled(false);
                         document.getElementById('district').value = "";
-                        document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Karein</option>';
+                        document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Kare</option>';
                         document.getElementById('vleName').value = "";
                         document.getElementById('mobileNo').value = "";
                         document.getElementById('address').value = "";
@@ -504,15 +503,15 @@
                         document.getElementById('existingPhotoContainer').innerHTML = "";
                         
                         let iconType = remarkL.includes("APPROV") ? "approved" : "pending";
-                        showPopup("Form Already Filled", "Aapne pehle se form bhar liya hai. Iska status '" + res.remarkL + "' hai.", iconType, true, cscId);
+                        showPopup("Form Already Filled", "Aapne pehle se Photo Upload Kar liya hai. Iska status '" + res.remarkL + "' hai.", iconType, true, cscId);
                         
                         warningBox.classList.remove('hidden');
-                        warningBox.innerText = "🛑 Entry Blocked: Aapka form pehle se jama hai aur status '" + res.remarkL + "' hai.";
+                        warningBox.innerText = "🛑 Entry Blocked: Aapka Photo pehle se Uploaded hai aur status '" + res.remarkL + "' hai.";
                     }
                 } else {
                     setFormEnabled(true);
                     document.getElementById('district').value = "";
-                    document.getElementById('block').innerHTML = '<option value="">Pehle District Select Karein</option>';
+                    document.getElementById('block').innerHTML = '<option value="">Pehle District Select Kare</option>';
                     document.getElementById('vleName').value = "";
                     document.getElementById('mobileNo').value = "";
                     document.getElementById('address').value = "";
@@ -520,7 +519,7 @@
                     document.getElementById('photoFile').value = "";
                     document.getElementById('existingPhotoContainer').innerHTML = "";
 
-                    showPopup("Fresh CSC ID", "Yeh ek nayi CSC ID hai. Aap form bhar sakte hain.", "approved", false);
+                    showPopup("Fresh CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nhi ki hai.Isliye Aap Photo Upload Kar sakte hai.", "approved", false);
                     warningBox.classList.add('hidden');
                 }
             } catch (err) {
@@ -545,7 +544,7 @@
 
             const loader = document.getElementById('fullPageLoader');
             const loaderText = document.getElementById('loaderText');
-            loaderText.innerText = "Saving your data, please wait...";
+            loaderText.innerText = "Photo Upload Ki Ja rhi hai, please wait...";
             loader.classList.remove('hidden');
 
             const cscId = document.getElementById('newCscId').value.trim();
@@ -610,11 +609,11 @@
 
                 if (data.success) {
                     formMsg.className = "text-center font-medium mt-3 text-green-600";
-                    formMsg.innerText = "✓ Entry safaltapurvak jama ho gayi hai!";
-                    showPopup("Success", data.message || "Aapka branding form safaltapurvak submit ho gaya hai.", "approved", true, document.getElementById('newCscId').value.trim());
+                    formMsg.innerText = "✓ Photo Successfully Upload Ho gyi hai!";
+                    showPopup("Success", data.message || "Aapki branding ki Photo Successfully submit ho gayi hai.", "approved", true, document.getElementById('newCscId').value.trim());
                     document.getElementById('brandingForm').reset();
                     setFormEnabled(false);
-                    document.getElementById('cscLookupMsg').innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
+                    document.getElementById('cscLookupMsg').innerText = "Kewal 12 digits ki sankhya darj kare.";
                     document.getElementById('cscLookupMsg').className = "text-xs font-medium block mt-1 text-gray-500";
                     document.getElementById('existingPhotoContainer').innerHTML = "";
                 } else {
@@ -642,7 +641,7 @@
 
             if (cscId.length !== 12) {
                 message.className = "text-center font-medium my-4 text-orange-600";
-                message.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein.";
+                message.innerText = "⚠️ Kripya puri 12-digit ki CSC ID darj kare.";
                 resultContainer.classList.add('hidden');
                 return;
             }
@@ -697,7 +696,7 @@
                     resultContainer.classList.remove('hidden');
                 } else {
                     message.className = "text-center font-medium my-4 text-red-600";
-                    message.innerText = "❌ Is CSC ID ka koi record nahi mila.";
+                    message.innerText = "❌ Is CSC ID ka koi Upload kiya hua Photo nahi mila.";
                 }
             } catch (err) {
                 loading.classList.add('hidden');
