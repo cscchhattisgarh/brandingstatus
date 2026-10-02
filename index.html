@@ -10,6 +10,12 @@
 <body class="bg-gray-100 min-h-screen py-10 px-4">
     <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 relative">
         
+        <!-- Full-Page Loading Overlay Spinner -->
+        <div id="fullPageLoader" class="hidden fixed inset-0 bg-black bg-opacity-40 z-50 flex flex-col items-center justify-center space-y-3">
+            <div class="animate-spin rounded-full h-12 w-12 border-4 border-white border-t-indigo-600"></div>
+            <p class="text-white font-medium text-lg bg-indigo-900 px-4 py-1.5 rounded-lg shadow">CSC ID Verify ki ja rahi hai, kripya pratiksha karein...</p>
+        </div>
+
         <!-- Header -->
         <div class="text-center mb-6">
             <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">CSC ID Verification & Branding Portal</h1>
@@ -38,19 +44,12 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
                     <!-- 1. CSC ID (Column D) - Always Enabled -->
-                    <div class="md:col-span-2 relative">
+                    <div class="md:col-span-2">
                         <label class="block text-gray-700 font-medium mb-1">CSC ID (12-digit) <span class="text-red-500">*</span></label>
-                        <div class="relative">
-                            <input type="text" id="newCscId" maxlength="12" inputmode="numeric" required placeholder="Enter 12-digit CSC ID" 
-                                oninput="validateCscId(this)"
-                                onblur="checkExistingCscId(this.value)"
-                                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-lg">
-                            
-                            <!-- Spinning Animation inside Input -->
-                            <div id="inputLoader" class="hidden absolute right-3 top-3">
-                                <div class="animate-spin rounded-full h-6 w-6 border-2 border-indigo-600 border-t-transparent"></div>
-                            </div>
-                        </div>
+                        <input type="text" id="newCscId" maxlength="12" inputmode="numeric" required placeholder="Enter 12-digit CSC ID" 
+                            oninput="validateCscId(this)"
+                            onblur="checkExistingCscId(this.value)"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-lg">
                         <span id="cscLookupMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 12 anko (digits) ki sankhya darj karein.</span>
                     </div>
 
@@ -154,12 +153,12 @@
         <!-- ================= POPUP MODAL FOR STATUS ================= -->
         <div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
             <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
-                <div id="popupIcon" class="text-4xl">ℹ️</div>
+                <div id="popupIcon" class="text-5xl">ℹ️</div>
                 <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
                 <p id="popupMessage" class="text-gray-600 text-sm"></p>
                 
                 <div id="popupButtons" class="flex justify-center gap-3 pt-2">
-                    <!-- Dynamic Buttons will be injected here -->
+                    <!-- Dynamic Buttons -->
                 </div>
             </div>
         </div>
@@ -235,7 +234,6 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCIVhYltXttOFEVta3MGprydflFx1yosaEYgYB7ujuaBsd5s7zNnnPAhFeSc2F4gYz/exec";
-                             
 
         const blockData = {
             "Balod": ["Balod", "Daundi", "Daundi Lohara", "Gunderdehi", "Gurur"],
@@ -325,7 +323,7 @@
             }
         }
 
-        function setFormEnabled(enable, isLocked = false) {
+        function setFormEnabled(enable) {
             const fields = ['district', 'block', 'vleName', 'mobileNo', 'photoFile', 'address', 'latLong', 'locBtn'];
             fields.forEach(id => {
                 const el = document.getElementById(id);
@@ -341,13 +339,6 @@
                 }
             });
 
-            if (isLocked) {
-                document.getElementById('district').disabled = true;
-                document.getElementById('district').classList.add('bg-gray-200', 'cursor-not-allowed');
-                document.getElementById('block').disabled = true;
-                document.getElementById('block').classList.add('bg-gray-200', 'cursor-not-allowed');
-            }
-
             const submitBtn = document.getElementById('submitBtn');
             if (enable) {
                 submitBtn.disabled = false;
@@ -360,7 +351,7 @@
             }
         }
 
-        function showPopup(title, message, type = 'info', showStatusBtn = false, cscId = "") {
+        function showPopup(title, message, iconType = 'info', showStatusBtn = false, cscId = "") {
             const popup = document.getElementById('statusPopup');
             const titleEl = document.getElementById('popupTitle');
             const msgEl = document.getElementById('popupMessage');
@@ -370,10 +361,12 @@
             titleEl.innerText = title;
             msgEl.innerText = message;
             
-            if (type === 'success') {
-                iconEl.innerText = "✅";
-            } else if (type === 'error') {
-                iconEl.innerText = "❌";
+            if (iconType === 'approved') {
+                iconEl.innerText = "✅"; // Green Tick
+            } else if (iconType === 'pending') {
+                iconEl.innerText = "⏳"; // Hourglass / Pending
+            } else if (iconType === 'rejected') {
+                iconEl.innerText = "❌"; // Red Cross
             } else {
                 iconEl.innerText = "ℹ️";
             }
@@ -427,7 +420,7 @@
         async function checkExistingCscId(cscId) {
             if (!cscId || cscId.length !== 12) return;
             
-            const loader = document.getElementById('inputLoader');
+            const loader = document.getElementById('fullPageLoader');
             const warningBox = document.getElementById('validationWarning');
             loader.classList.remove('hidden');
 
@@ -437,44 +430,54 @@
                 loader.classList.add('hidden');
 
                 if (res.exists) {
-                    document.getElementById('district').value = res.district || "";
-                    loadBlocks();
-                    document.getElementById('block').value = res.block || "";
-                    document.getElementById('vleName').value = res.vleName || "";
-                    document.getElementById('mobileNo').value = res.mobileNo || "";
-                    document.getElementById('address').value = res.address || "";
-                    if(res.lat && res.lon) {
-                        document.getElementById('latLong').value = `${res.lat}, ${res.lon}`;
-                    }
-
-                    const photoContainer = document.getElementById('existingPhotoContainer');
-                    if (res.photoLink) {
-                        photoContainer.innerHTML = `Pichhli Uploaded Photo: <a href="${res.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>`;
-                    } else {
-                        photoContainer.innerHTML = "";
-                    }
-
                     const remarkL = (res.remarkL || "").toUpperCase();
+
                     if (remarkL.includes("REJECT")) {
-                        setFormEnabled(true, false); // Form enabled & District/Block editable
-                        showPopup("Status: Rejected", "Aapka pichhla status Rejected hai. Aap nayi entry submit kar sakte hain.", "success", false);
+                        // REJECTED CASE: Unlock form and auto-populate everything including District & Block
+                        setFormEnabled(true);
+                        document.getElementById('district').value = res.district || "";
+                        loadBlocks();
+                        document.getElementById('block').value = res.block || "";
+                        document.getElementById('vleName').value = res.vleName || "";
+                        document.getElementById('mobileNo').value = res.mobileNo || "";
+                        document.getElementById('address').value = res.address || "";
+                        if(res.lat && res.lon) {
+                            document.getElementById('latLong').value = `${res.lat}, ${res.lon}`;
+                        }
+
+                        const photoContainer = document.getElementById('existingPhotoContainer');
+                        if (res.photoLink) {
+                            photoContainer.innerHTML = `Pichhli Rejected Photo: <a href="${res.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>`;
+                        } else {
+                            photoContainer.innerHTML = "";
+                        }
+
+                        showPopup("Status: Rejected", "Aapka pichhla status Rejected hai. Aap nayi photo aur details daal kar form resubmit kar sakte hain.", "rejected", false);
                         warningBox.classList.add('hidden');
                     } else {
-                        setFormEnabled(false, true); // Locked
-                        showPopup("Form Already Filled", "Aapne pehle se form bhar liya hai. Iska status '" + res.remarkL + "' hai.", "error", true, cscId);
+                        // APPROVED or PENDING CASE: Lock form, do not populate fields, show message & Status Check button
+                        setFormEnabled(false);
+                        document.getElementById('existingPhotoContainer.innerHTML') = "";
+                        
+                        let iconType = remarkL.includes("APPROV") ? "approved" : "pending";
+                        showPopup("Form Already Filled", "Aapne pehle se form bhar liya hai. Iska status '" + res.remarkL + "' hai.", iconType, true, cscId);
+                        
                         warningBox.classList.remove('hidden');
                         warningBox.innerText = "🛑 Entry Blocked: Aapka form pehle se jama hai aur status '" + res.remarkL + "' hai.";
                     }
                 } else {
-                    setFormEnabled(true, false);
-                    showPopup("Fresh CSC ID", "Yeh ek nayi CSC ID hai. Aap form bhar sakte hain.", "success", false);
+                    // FRESH ENTRY CASE: Unlock form
+                    setFormEnabled(true);
+                    document.getElementById('brandingForm').reset();
+                    document.getElementById('newCscId').value = cscId; // CSC ID retain rakho
+                    showPopup("Fresh CSC ID", "Yeh ek nayi CSC ID hai. Aap form bhar sakte hain.", "approved", false);
                     warningBox.classList.add('hidden');
                     document.getElementById('existingPhotoContainer').innerHTML = "";
                 }
             } catch (err) {
                 loader.classList.add('hidden');
                 console.error(err);
-                showPopup("Error", "CSC ID check karne me samasya aayi.", "error", false);
+                showPopup("Error", "CSC ID check karne me samasya aayi.", "info", false);
             }
         }
 
