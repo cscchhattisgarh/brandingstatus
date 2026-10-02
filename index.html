@@ -147,7 +147,7 @@
                     <label class="block text-gray-700 font-medium mb-1">Google Map Location (Latitude & Longitude) <span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
                         <input type="text" id="latLong" disabled required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none font-mono text-sm">
-                        <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-medium px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap">📍 Current Location</button>
+                        <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-semibold px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap shadow-sm">📍 Current Location</button>
                     </div>
                     <p class="text-xs text-gray-500 mt-1.5">
                         💡 <b>Tip:</b> Aap ya to manual Latitude & Longitude is format me type kare: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location capture karne ke liye <b>'Current Location'</b> button par click kare.
@@ -350,7 +350,7 @@
         }
 
         function setFormEnabled(enable) {
-            const fields = ['district', 'block', 'vleName', 'mobileNo', 'photoFile', 'address', 'latLong', 'locBtn'];
+            const fields = ['district', 'block', 'vleName', 'mobileNo', 'photoFile', 'address', 'latLong'];
             fields.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
@@ -364,6 +364,19 @@
                     }
                 }
             });
+
+            // Special handling for Current Location Button styling
+            const locBtn = document.getElementById('locBtn');
+            if (locBtn) {
+                locBtn.disabled = !enable;
+                if (enable) {
+                    locBtn.classList.remove('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+                    locBtn.classList.add('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'shadow');
+                } else {
+                    locBtn.classList.add('bg-gray-200', 'text-gray-400', 'cursor-not-allowed');
+                    locBtn.classList.remove('bg-emerald-600', 'hover:bg-emerald-700', 'text-white', 'cursor-pointer', 'shadow');
+                }
+            }
 
             const submitBtn = document.getElementById('submitBtn');
             if (enable) {
