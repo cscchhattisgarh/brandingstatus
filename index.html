@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen py-10 px-4">
-    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 relative">
         
         <!-- Header -->
         <div class="text-center mb-6">
@@ -30,27 +30,34 @@
         <div id="sectionNewEntry" class="space-y-4">
             <h2 class="text-xl font-semibold text-gray-800 mb-2">VLE Branding New Entry Form</h2>
             <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> darj karein. Purana data hone par fields auto-fill ho jayengi.
+                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> darj karein. Status check hone ke baad hi baaki fields enable hongi.
             </p>
 
             <form id="brandingForm" onsubmit="submitNewEntry(event)" class="space-y-4">
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
-                    <!-- 1. CSC ID (Column D) - Strictly 12 Digit Numeric & Auto-fill Trigger -->
-                    <div class="md:col-span-2">
+                    <!-- 1. CSC ID (Column D) - Always Enabled -->
+                    <div class="md:col-span-2 relative">
                         <label class="block text-gray-700 font-medium mb-1">CSC ID (12-digit) <span class="text-red-500">*</span></label>
-                        <input type="text" id="newCscId" maxlength="12" inputmode="numeric" required placeholder="Enter 12-digit CSC ID" 
-                            oninput="validateCscId(this)"
-                            onblur="checkExistingCscId(this.value)"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-lg">
+                        <div class="relative">
+                            <input type="text" id="newCscId" maxlength="12" inputmode="numeric" required placeholder="Enter 12-digit CSC ID" 
+                                oninput="validateCscId(this)"
+                                onblur="checkExistingCscId(this.value)"
+                                class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-lg">
+                            
+                            <!-- Spinning Animation inside Input -->
+                            <div id="inputLoader" class="hidden absolute right-3 top-3">
+                                <div class="animate-spin rounded-full h-6 w-6 border-2 border-indigo-600 border-t-transparent"></div>
+                            </div>
+                        </div>
                         <span id="cscLookupMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 12 anko (digits) ki sankhya darj karein.</span>
                     </div>
 
-                    <!-- 2. District (Column B) - A to Z Sorted Dropdown -->
+                    <!-- 2. District (Column B) - Initially Disabled -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">District <span class="text-red-500">*</span></label>
-                        <select id="district" required onchange="loadBlocks()" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <select id="district" disabled required onchange="loadBlocks()" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
                             <option value="">Select District</option>
                             <option value="Balod">Balod</option>
                             <option value="Baloda Bazar">Baloda Bazar</option>
@@ -88,61 +95,73 @@
                         </select>
                     </div>
 
-                    <!-- 3. Block (Column C) - Dynamic Dependent Dropdown -->
+                    <!-- 3. Block (Column C) - Initially Disabled -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">Block <span class="text-red-500">*</span></label>
-                        <select id="block" required class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                            <option value="">Pehle District Select Karein</option>
+                        <select id="block" disabled required class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
+                            <option value="">Pehle CSC ID Darj Karein</option>
                         </select>
                     </div>
 
-                    <!-- 4. VLE Name (Column E) -->
+                    <!-- 4. VLE Name (Column E) - Initially Disabled -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">VLE Name <span class="text-red-500">*</span></label>
-                        <input type="text" id="vleName" required placeholder="Enter Full Name" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                        <input type="text" id="vleName" disabled required placeholder="Enter Full Name" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
                     </div>
 
-                    <!-- 5. Mobile No (Column F) -->
+                    <!-- 5. Mobile No (Column F) - Initially Disabled -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">Mobile No <span class="text-red-500">*</span></label>
-                        <input type="text" id="mobileNo" maxlength="10" inputmode="numeric" required placeholder="10-digit Mobile Number"
+                        <input type="text" id="mobileNo" disabled maxlength="10" inputmode="numeric" required placeholder="10-digit Mobile Number"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
                     </div>
 
-                    <!-- 6. Photo Browse Upload (Column J) -->
+                    <!-- 6. Photo Browse Upload (Column J) - Initially Disabled -->
                     <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
                         <label class="block text-gray-700 font-medium mb-1">जेनेरिक ब्रांडिंग फोटो (Browse & Upload) <span class="text-red-500">*</span></label>
-                        <input type="file" id="photoFile" accept="image/*" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm focus:outline-none">
+                        <input type="file" id="photoFile" disabled accept="image/*" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed text-sm focus:outline-none">
                         <div id="existingPhotoContainer" class="mt-2 text-sm"></div>
                     </div>
                 </div>
 
-                <!-- 7. पूरा पता लैंड Marks के साथ (Column G) -->
+                <!-- 7. Address (Column G) - Initially Disabled -->
                 <div>
                     <label class="block text-gray-700 font-medium mb-1">पूरा पता लैंड Marks के साथ (Full Address & Landmark) <span class="text-red-500">*</span></label>
-                    <textarea id="address" rows="2" required placeholder="Dukan ka poora pata aur landmark likhein" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                    <textarea id="address" rows="2" disabled required placeholder="Dukan ka poora pata aur landmark likhein" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"></textarea>
                 </div>
 
-                <!-- 8 & 9. Latitude & Longitude (Column H & I) -->
+                <!-- 8 & 9. Latitude & Longitude (Column H & I) - Initially Disabled -->
                 <div>
                     <label class="block text-gray-700 font-medium mb-1">Google Map Location (Latitude & Longitude) <span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
-                        <input type="text" id="latLong" required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none font-mono text-sm">
-                        <button type="button" onclick="getLocation()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">📍 Get Location</button>
+                        <input type="text" id="latLong" disabled required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none font-mono text-sm">
+                        <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-medium px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap">📍 Get Location</button>
                     </div>
-                    <p class="text-xs text-gray-500 mt-1">Sample Format: <b>21.2514, 81.6296</b> (Lat aur Long alag-alag columns me save honge).</p>
                 </div>
 
                 <!-- Submit Button & Validation Status Box -->
                 <div class="text-center pt-4">
-                    <button type="submit" id="submitBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                    <button type="submit" id="submitBtn" disabled class="bg-gray-400 cursor-not-allowed text-white font-semibold px-8 py-3 rounded-lg shadow-md transition duration-200">
                         Submit Entry
                     </button>
                     <p id="validationWarning" class="text-red-600 font-semibold text-sm mt-2 hidden"></p>
                 </div>
             </form>
             <div id="formMessage" class="text-center font-medium mt-3"></div>
+        </div>
+
+        <!-- ================= POPUP MODAL FOR STATUS ================= -->
+        <div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+            <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
+                <div id="popupIcon" class="text-4xl">ℹ️</div>
+                <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
+                <p id="popupMessage" class="text-gray-600 text-sm"></p>
+                
+                <div id="popupButtons" class="flex justify-center gap-3 pt-2">
+                    <!-- Dynamic Buttons will be injected here -->
+                </div>
+            </div>
         </div>
 
         <!-- ================= SECTION 2: STATUS CHECK PORTAL ================= -->
@@ -216,7 +235,8 @@
 
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCIVhYltXttOFEVta3MGprydflFx1yosaEYgYB7ujuaBsd5s7zNnnPAhFeSc2F4gYz/exec";
- 
+                             
+
         const blockData = {
             "Balod": ["Balod", "Daundi", "Daundi Lohara", "Gunderdehi", "Gurur"],
             "Baloda Bazar": ["Baloda Bazar", "Bhatapara", "Kasdol", "Palari", "Simga", "Tilda (Part)"],
@@ -294,13 +314,96 @@
             if (input.value.length > 0 && input.value.length < 12) {
                 msg.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein (" + input.value.length + "/12)";
                 msg.className = "text-xs font-medium block mt-1 text-orange-600";
+                setFormEnabled(false);
             } else if (input.value.length === 12) {
                 msg.innerText = "✓ 12-digit CSC ID valid hai.";
                 msg.className = "text-xs font-medium block mt-1 text-green-600";
             } else {
                 msg.innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
                 msg.className = "text-xs font-medium block mt-1 text-gray-500";
+                setFormEnabled(false);
             }
+        }
+
+        function setFormEnabled(enable, isLocked = false) {
+            const fields = ['district', 'block', 'vleName', 'mobileNo', 'photoFile', 'address', 'latLong', 'locBtn'];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.disabled = !enable;
+                    if (enable) {
+                        el.classList.remove('bg-gray-100', 'cursor-not-allowed');
+                        el.classList.add('bg-white');
+                    } else {
+                        el.classList.add('bg-gray-100', 'cursor-not-allowed');
+                        el.classList.remove('bg-white');
+                    }
+                }
+            });
+
+            if (isLocked) {
+                document.getElementById('district').disabled = true;
+                document.getElementById('district').classList.add('bg-gray-200', 'cursor-not-allowed');
+                document.getElementById('block').disabled = true;
+                document.getElementById('block').classList.add('bg-gray-200', 'cursor-not-allowed');
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            if (enable) {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('bg-gray-400', 'cursor-not-allowed');
+                submitBtn.classList.add('bg-indigo-600', 'hover:bg-indigo-700');
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('bg-gray-400', 'cursor-not-allowed');
+                submitBtn.classList.remove('bg-indigo-600', 'hover:bg-indigo-700');
+            }
+        }
+
+        function showPopup(title, message, type = 'info', showStatusBtn = false, cscId = "") {
+            const popup = document.getElementById('statusPopup');
+            const titleEl = document.getElementById('popupTitle');
+            const msgEl = document.getElementById('popupMessage');
+            const iconEl = document.getElementById('popupIcon');
+            const btnContainer = document.getElementById('popupButtons');
+
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            
+            if (type === 'success') {
+                iconEl.innerText = "✅";
+            } else if (type === 'error') {
+                iconEl.innerText = "❌";
+            } else {
+                iconEl.innerText = "ℹ️";
+            }
+
+            btnContainer.innerHTML = "";
+
+            if (showStatusBtn) {
+                const statusBtn = document.createElement('button');
+                statusBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm";
+                statusBtn.innerText = "🔍 Status Check Karein";
+                statusBtn.onclick = function() {
+                    closePopup();
+                    switchTab('statusCheck');
+                    document.getElementById('cscIdInput').value = cscId;
+                    searchData();
+                };
+                btnContainer.appendChild(statusBtn);
+            }
+
+            const okBtn = document.createElement('button');
+            okBtn.className = "bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition text-sm";
+            okBtn.innerText = "Theek Hai (OK)";
+            okBtn.onclick = closePopup;
+            btnContainer.appendChild(okBtn);
+
+            popup.classList.remove('hidden');
+        }
+
+        function closePopup() {
+            document.getElementById('statusPopup').classList.add('hidden');
         }
 
         function getLocation() {
@@ -321,20 +424,17 @@
             }
         }
 
-        // Auto-fill & Status Check via Fetch API
         async function checkExistingCscId(cscId) {
-            if (!cscId || cscId.length < 12) return;
+            if (!cscId || cscId.length !== 12) return;
             
-            const lookupMsg = document.getElementById('cscLookupMsg');
-            const submitBtn = document.getElementById('submitBtn');
+            const loader = document.getElementById('inputLoader');
             const warningBox = document.getElementById('validationWarning');
-            
-            lookupMsg.innerText = "Checking existing record...";
-            lookupMsg.className = "text-xs font-medium text-blue-600 block mt-1";
+            loader.classList.remove('hidden');
 
             try {
                 const response = await fetch(`${WEB_APP_URL}?action=check&cscid=${encodeURIComponent(cscId)}`);
                 const res = await response.json();
+                loader.classList.add('hidden');
 
                 if (res.exists) {
                     document.getElementById('district').value = res.district || "";
@@ -356,31 +456,28 @@
 
                     const remarkL = (res.remarkL || "").toUpperCase();
                     if (remarkL.includes("REJECT")) {
-                        lookupMsg.innerText = "✓ Status Rejected hai. Aap nayi entry submit kar sakte hain.";
-                        lookupMsg.className = "text-xs font-medium text-green-600 block mt-1";
-                        submitBtn.disabled = false;
+                        setFormEnabled(true, false); // Form enabled & District/Block editable
+                        showPopup("Status: Rejected", "Aapka pichhla status Rejected hai. Aap nayi entry submit kar sakte hain.", "success", false);
                         warningBox.classList.add('hidden');
                     } else {
-                        lookupMsg.innerText = "⚠️ Status: " + res.remarkL;
-                        lookupMsg.className = "text-xs font-medium text-red-600 block mt-1";
-                        submitBtn.disabled = true;
+                        setFormEnabled(false, true); // Locked
+                        showPopup("Form Already Filled", "Aapne pehle se form bhar liya hai. Iska status '" + res.remarkL + "' hai.", "error", true, cscId);
                         warningBox.classList.remove('hidden');
-                        warningBox.innerText = "🛑 Entry Blocked: Is CSC ID ka status '" + res.remarkL + "' hai (Rejected nahi hai), isiliye nayi entry allow nahi hai!";
+                        warningBox.innerText = "🛑 Entry Blocked: Aapka form pehle se jama hai aur status '" + res.remarkL + "' hai.";
                     }
                 } else {
-                    lookupMsg.innerText = "✓ Nayi CSC ID hai (Fresh Entry).";
-                    lookupMsg.className = "text-xs font-medium text-green-600 block mt-1";
-                    submitBtn.disabled = false;
+                    setFormEnabled(true, false);
+                    showPopup("Fresh CSC ID", "Yeh ek nayi CSC ID hai. Aap form bhar sakte hain.", "success", false);
                     warningBox.classList.add('hidden');
                     document.getElementById('existingPhotoContainer').innerHTML = "";
                 }
             } catch (err) {
+                loader.classList.add('hidden');
                 console.error(err);
-                lookupMsg.innerText = "Error checking CSC ID.";
+                showPopup("Error", "CSC ID check karne me samasya aayi.", "error", false);
             }
         }
 
-        // Form Submit via Fetch POST API
         function submitNewEntry(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
@@ -422,6 +519,7 @@
                         document.getElementById('brandingForm').reset();
                         document.getElementById('existingPhotoContainer').innerHTML = "";
                         document.getElementById('cscLookupMsg').innerText = "";
+                        setFormEnabled(false);
                     }
                     submitBtn.disabled = false;
                     submitBtn.innerText = "Submit Entry";
@@ -447,7 +545,6 @@
             }
         }
 
-        // Status Check Portal Search via Fetch API
         async function searchData() {
             const cscId = document.getElementById('cscIdInput').value.trim();
             const messageDiv = document.getElementById('message');
