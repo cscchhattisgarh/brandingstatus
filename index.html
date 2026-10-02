@@ -530,137 +530,167 @@
             submitBtn.innerText = "Submitting...";
             formMsg.innerText = "";
 
-            // 1. Center Loader Animation dikhayein "Saving your data..." text ke sath
             const loader = document.getElementById('fullPageLoader');
             const loaderText = document.getElementById('loaderText');
             loaderText.innerText = "Saving your data, please wait...";
             loader.classList.remove('hidden');
 
-            function sendData(base64Data = "", mimeType = "", fileName = "") {
-                const payload = {
-                    cscId: document.getElementById('newCscId').value.trim(),
-                    district: document.getElementById('district').value,
-                    block: document.getElementById('block').value,
-                    vleName: document.getElementById('vleName').value.trim(),
-                    mobileNo: document.getElementById('mobileNo').value.trim(),
-                    address: document.getElementById('address').value.trim(),
-                    lat: latLonParts[0] ? latLonParts[0].trim() : "",
-                    lon: latLonParts[1] ? latLonParts[1].trim() : "",
-                    fileData: base64Data,
-                    mimeType: mimeType,
-                    fileName: fileName
-                };
+            const cscId = document.getElementById('newCscId').value.trim();
+            const district = document.getElementById('district').value;
+            const block = document.getElementById('block').value;
+            const vleName = document.getElementById('vleName').value.trim();
+            const mobileNo = document.getElementById('mobileNo').value.trim();
+            const address = document.getElementById('address').value.trim();
+            const lat = latLonParts[0] ? latLonParts[0].trim() : "";
+            const lon = latLonParts[1] ? latLonParts[1].trim() : "";
 
-                google.script.run
-                    .withSuccessHandler(function(res) {
-                        // Loader hatayein
-                        loader.classList.add('hidden');
-                        
-                        if(res && res.success) {
-                            showPopup("Success", "Aapka data safalpurvak save ho gaya hai!", "approved", false);
-                            
-                            // 2. Form ko pura blank karein
-                            document.getElementById('brandingForm').reset();
-                            document.getElementById('existingPhotoContainer').innerHTML = "";
-                            document.getElementById('cscLookupMsg').innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
-                            document.getElementById('cscLookupMsg').className = "text-xs font-medium block mt-1 text-gray-500";
-
-                            // 3. Form ko wapas non-editable (disabled) kar dein
-                            setFormEnabled(false);
-                            document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Karein</option>';
-                        } else {
-                            alert("Error: " + (res ? res.message : "Unknown error"));
-                            submitBtn.disabled = false;
-                            submitBtn.innerText = "Submit Entry";
-                        }
-                    })
-                    .withFailureHandler(function(err) {
-                        loader.classList.add('hidden');
-                        alert("Server Error: " + err.message);
-                        submitBtn.disabled = false;
-                        submitBtn.innerText = "Submit Entry";
-                    })
-                    .saveBrandingEntry(payload);
-            }
-
-            if (fileInput.files && fileInput.files[0]) {
+            if (fileInput.files.length > 0) {
                 const file = fileInput.files[0];
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    const base64String = e.target.result.split(',')[1];
-                    sendData(base64String, file.type, file.name);
+                reader.onload = function(event) {
+                    const base64String = event.target.result.split(',')[1];
+                    sendJsonToBackend({
+                        action: 'submit',
+                        cscId: cscId,
+                        district: district,
+                        block: block,
+                        vleName: vleName,
+                        mobileNo: mobileNo,
+                        address: address,
+                        lat: lat,
+                        lon: lon,
+                        fileData: base64String,
+                        mimeType: file.type,
+                        fileName: file.name
+                    });
                 };
                 reader.readAsDataURL(file);
             } else {
-                sendData();
-          }
+                sendJsonToBackend({
+                    action: 'submit',
+                    cscId: cscId,
+                    district: district,
+                    block: block,
+                    vleName: vleName,
+                    mobileNo: mobileNo,
+                    address: address,
+                    lat: lat,
+                    lon: lon
+                });
+            }
         }
 
-        // Status check functions (Aapka original code jaisa tha)
+        function sendJsonToBackend(payload) {
+            const submitBtn = document.getElementById('submitBtn');
+            const formMsg = document.getElementById('formMessage');
+            const loader = document.getElementById('fullPageLoader');
+
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                loader.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Entry";
+
+                if (data.success) {
+                    formMsg.className = "text-center font-medium mt-3 text-green-600";
+                    formMsg.innerText = "✓ Entry safaltapurvak jama ho gayi hai!";
+                    showPopup("Success", data.message || "Aapka branding form safaltapurvak submit ho gaya hai.", "approved", true, document.getElementById('newCscId').value.trim());
+                    document.getElementById('brandingForm').reset();
+                    setFormEnabled(false);
+                    document.getElementById('cscLookupMsg').innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
+                    document.getElementById('cscLookupMsg').className = "text-xs font-medium block mt-1 text-gray-500";
+                    document.getElementById('existingPhotoContainer').innerHTML = "";
+                } else {
+                    formMsg.className = "text-center font-medium mt-3 text-red-600";
+                    formMsg.innerText = "Error: " + (data.message || "Kuch garbar ho gayi.");
+                    showPopup("Error", data.message || "Entry save karne me samasya aayi.", "rejected", false);
+                }
+            })
+            .catch(error => {
+                loader.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit Entry";
+                console.error(error);
+                formMsg.className = "text-center font-medium mt-3 text-red-600";
+                formMsg.innerText = "Server connection error.";
+                showPopup("Error", "Network connection fail ho gaya.", "rejected", false);
+            });
+        }
+
         async function searchData() {
             const cscId = document.getElementById('cscIdInput').value.trim();
-            const messageEl = document.getElementById('message');
-            const loadingEl = document.getElementById('loading');
+            const loading = document.getElementById('loading');
+            const message = document.getElementById('message');
             const resultContainer = document.getElementById('resultContainer');
 
             if (cscId.length !== 12) {
-                messageEl.innerText = "Kripya valid 12-digit CSC ID darj karein.";
-                messageEl.className = "text-center font-medium my-4 text-red-600";
+                message.className = "text-center font-medium my-4 text-orange-600";
+                message.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein.";
                 resultContainer.classList.add('hidden');
                 return;
             }
 
-            messageEl.innerText = "";
-            loadingEl.classList.remove('hidden');
+            loading.classList.remove('hidden');
+            message.innerText = "";
             resultContainer.classList.add('hidden');
 
             try {
-                const response = await fetch(`${WEB_APP_URL}?action=search&cscid=${encodeURIComponent(cscId)}`);
+                const response = await fetch(`${WEB_APP_URL}?action=lookup&cscid=${encodeURIComponent(cscId)}`);
                 const res = await response.json();
-                loadingEl.classList.add('hidden');
+                loading.classList.add('hidden');
 
-                if (res.found) {
-                    document.getElementById('resDistrict').innerText = res.district || "-";
-                    document.getElementById('resCscId').innerText = res.cscId || "-";
-                    document.getElementById('resVleName').innerText = res.vleName || "-";
-                    document.getElementById('resMobile').innerText = res.mobileNo || "-";
+                if (res.success && res.profile) {
+                    document.getElementById('resDistrict').innerText = res.profile.district || "";
+                    document.getElementById('resCscId').innerText = res.profile.cscId || "";
+                    document.getElementById('resVleName').innerText = res.profile.vleName || "";
+                    document.getElementById('resMobile').innerText = res.profile.mobileNo || "";
 
                     const tbody = document.getElementById('recordsTableBody');
                     tbody.innerHTML = "";
 
                     if (res.records && res.records.length > 0) {
                         res.records.forEach((rec, index) => {
-                            let statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800">${rec.status || 'Pending'}</span>`;
-                            const sUpper = (rec.status || "").toUpperCase();
-                            if (sUpper.includes("APPROV")) {
-                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-800">${rec.status}</span>`;
-                            } else if (sUpper.includes("REJECT")) {
-                                statusBadge = `<span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-red-800">${rec.status}</span>`;
+                            const tr = document.createElement('tr');
+                            tr.className = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+                            
+                            let mapLinkHtml = rec.latLong ? `<a href="https://maps.google.com/?q=${rec.lat},${rec.lon}" target="_blank" class="text-blue-600 underline font-medium">📍 View Map</a>` : "-";
+                            let photoLinkHtml = rec.photoLink ? `<a href="${rec.photoLink}" target="_blank" class="text-indigo-600 underline font-medium">📷 View Photo</a>` : "-";
+                            
+                            let statusClass = "px-2 py-1 rounded text-xs font-bold ";
+                            const rem = (rec.remark || "").toUpperCase();
+                            if (rem.includes("APPROV")) {
+                                statusClass += "bg-green-100 text-green-800";
+                            } else if (rem.includes("REJECT")) {
+                                statusClass += "bg-red-100 text-red-800";
+                            } else {
+                                statusClass += "bg-yellow-100 text-yellow-850";
                             }
 
-                            const tr = document.createElement('tr');
-                            tr.className = "bg-white border-b hover:bg-gray-50";
                             tr.innerHTML = `
                                 <td class="border border-gray-200 px-4 py-3">${index + 1}</td>
-                                <td class="border border-gray-200 px-4 py-3">${rec.dateTime || '-'}</td>
-                                <td class="border border-gray-200 px-4 py-3">${rec.block || '-'}</td>
-                                <td class="border border-gray-200 px-4 py-3">${rec.lat && rec.lon ? `<a href="https://maps.google.com/?q=${rec.lat},${rec.lon}" target="_blank" class="text-indigo-600 underline">Map View</a>` : '-'}</td>
-                                <td class="border border-gray-200 px-4 py-3">${rec.photoLink ? `<a href="${rec.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>` : '-'}</td>
-                                <td class="border border-gray-200 px-4 py-3">${statusBadge}</td>
+                                <td class="border border-gray-200 px-4 py-3 text-sm">${rec.date}</td>
+                                <td class="border border-gray-200 px-4 py-3">${rec.block}</td>
+                                <td class="border border-gray-200 px-4 py-3">${mapLinkHtml}</td>
+                                <td class="border border-gray-200 px-4 py-3">${photoLinkHtml}</td>
+                                <td class="border border-gray-200 px-4 py-3"><span class="${statusClass}">${rec.remark}</span></td>
                             `;
                             tbody.appendChild(tr);
                         });
                     }
                     resultContainer.classList.remove('hidden');
                 } else {
-                    messageEl.innerText = "Is CSC ID ka koi record nahi mila.";
-                    messageEl.className = "text-center font-medium my-4 text-orange-600";
+                    message.className = "text-center font-medium my-4 text-red-600";
+                    message.innerText = "❌ Is CSC ID ka koi record nahi mila.";
                 }
             } catch (err) {
-                loadingEl.classList.add('hidden');
-                messageEl.innerText = "Data load karne me error aayi.";
-                messageEl.className = "text-center font-medium my-4 text-red-600";
+                loading.classList.add('hidden');
                 console.error(err);
+                message.className = "text-center font-medium my-4 text-red-600";
+                message.innerText = "Data load karne me error aayi.";
             }
         }
     </script>
