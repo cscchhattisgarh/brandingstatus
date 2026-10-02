@@ -3,102 +3,451 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CSC ID Verification Status Portal</title>
+    <title>CSC ID Verification & Branding Portal</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen py-10 px-4">
-    <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8">
+        
         <!-- Header -->
-        <div class="text-center mb-8">
-            <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">CSC ID Verification & Branding Status</h1>
-            <p class="text-gray-600 mt-2">Apni 12-digit ki CSC ID darj karke apna profile aur branding approval status check karein.</p>
+        <div class="text-center mb-6">
+            <h1 class="text-2xl md:text-3xl font-bold text-indigo-700">CSC ID Verification & Branding Portal</h1>
+            <p class="text-gray-600 mt-1">Nayi entry karein ya apna approval status check karein.</p>
         </div>
 
-       <!-- Search Box -->
-        <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-            <input type="text" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" inputmode="numeric" 
-                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                onkeypress="return event.charCode >= 48 && event.charCode <= 57"
-                class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">  
-            <button onclick="searchData()" 
-                class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
-                Search Status
+        <!-- Navigation Tabs -->
+        <div class="flex justify-center border-b border-gray-200 mb-6">
+            <button onclick="switchTab('newEntry')" id="tabNewEntry" class="py-2 px-6 font-semibold text-indigo-600 border-b-2 border-indigo-600 focus:outline-none transition duration-200">
+                📝 1. New Entry Form
+            </button>
+            <button onclick="switchTab('statusCheck')" id="tabStatusCheck" class="py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200">
+                🔍 2. Status Check Portal
             </button>
         </div>
 
-        <!-- Loading Spinner Animation -->
-        <div id="loading" class="hidden text-center my-6">
-            <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
-            <p class="text-gray-600 mt-2 font-medium">Data load ho raha hai, kripya pratiksha karein...</p>
+        <!-- ================= SECTION 1: NEW ENTRY FORM ================= -->
+        <div id="sectionNewEntry" class="space-y-4">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">VLE Branding New Entry Form</h2>
+            <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> darj karein. Purana data hone par fields auto-fill ho jayengi.
+            </p>
+
+            <form id="brandingForm" onsubmit="submitNewEntry(event)" class="space-y-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- 1. CSC ID (Column D) - Strictly 12 Digit Numeric & Auto-fill Trigger -->
+                    <div class="md:col-span-2">
+                        <label class="block text-gray-700 font-medium mb-1">CSC ID (12-digit) <span class="text-red-500">*</span></label>
+                        <input type="text" id="newCscId" maxlength="12" inputmode="numeric" required placeholder="Enter 12-digit CSC ID" 
+                            oninput="validateCscId(this)"
+                            onblur="checkExistingCscId(this.value)"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-semibold text-lg">
+                        <span id="cscLookupMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 12 anko (digits) ki sankhya darj karein.</span>
+                    </div>
+
+                    <!-- 2. District (Column B) - A to Z Sorted Dropdown -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">District <span class="text-red-500">*</span></label>
+                        <select id="district" required onchange="loadBlocks()" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="">Select District</option>
+                            <option value="Balod">Balod</option>
+                            <option value="Baloda Bazar">Baloda Bazar</option>
+                            <option value="Balrampur">Balrampur</option>
+                            <option value="Bastar">Bastar</option>
+                            <option value="Bemetara">Bemetara</option>
+                            <option value="Bijapur">Bijapur</option>
+                            <option value="Bilaspur">Bilaspur</option>
+                            <option value="Dantewada">Dantewada</option>
+                            <option value="Dhamtari">Dhamtari</option>
+                            <option value="Durg">Durg</option>
+                            <option value="Gariaband">Gariaband</option>
+                            <option value="Gaurella-Pendra-Marwahi">Gaurella-Pendra-Marwahi</option>
+                            <option value="Janjgir-Champa">Janjgir-Champa</option>
+                            <option value="Jashpur">Jashpur</option>
+                            <option value="Kabirdham">Kabirdham</option>
+                            <option value="Kanker">Kanker</option>
+                            <option value="Khairagarh-Chhuikhadan-Gandai">Khairagarh-Chhuikhadan-Gandai</option>
+                            <option value="Kondagaon">Kondagaon</option>
+                            <option value="Korba">Korba</option>
+                            <option value="Koriya">Koriya</option>
+                            <option value="Mahasamund">Mahasamund</option>
+                            <option value="Manendragarh-Chirmiri-Bharatpur">Manendragarh-Chirmiri-Bharatpur</option>
+                            <option value="Mohla-Manpur-Ambagarh Chowki">Mohla-Manpur-Ambagarh Chowki</option>
+                            <option value="Mungeli">Mungeli</option>
+                            <option value="Narayanpur">Narayanpur</option>
+                            <option value="Raigarh">Raigarh</option>
+                            <option value="Raipur">Raipur</option>
+                            <option value="Rajnandgaon">Rajnandgaon</option>
+                            <option value="Sakti">Sakti</option>
+                            <option value="Sarangarh-Bilaigarh">Sarangarh-Bilaigarh</option>
+                            <option value="Sukma">Sukma</option>
+                            <option value="Surajpur">Surajpur</option>
+                            <option value="Surguja">Surguja</option>
+                        </select>
+                    </div>
+
+                    <!-- 3. Block (Column C) - Dynamic Dependent Dropdown -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Block <span class="text-red-500">*</span></label>
+                        <select id="block" required class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                            <option value="">Pehle District Select Karein</option>
+                        </select>
+                    </div>
+
+                    <!-- 4. VLE Name (Column E) -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">VLE Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="vleName" required placeholder="Enter Full Name" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+
+                    <!-- 5. Mobile No (Column F) -->
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-1">Mobile No <span class="text-red-500">*</span></label>
+                        <input type="text" id="mobileNo" maxlength="10" inputmode="numeric" required placeholder="10-digit Mobile Number"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+                    </div>
+
+                    <!-- 6. Photo Browse Upload (Column J) -->
+                    <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <label class="block text-gray-700 font-medium mb-1">जेनेरिक ब्रांडिंग फोटो (Browse & Upload) <span class="text-red-500">*</span></label>
+                        <input type="file" id="photoFile" accept="image/*" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white text-sm focus:outline-none">
+                        <div id="existingPhotoContainer" class="mt-2 text-sm"></div>
+                    </div>
+                </div>
+
+                <!-- 7. पूरा पता लैंड Marks के साथ (Column G) -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">पूरा पता लैंड Marks के साथ (Full Address & Landmark) <span class="text-red-500">*</span></label>
+                    <textarea id="address" rows="2" required placeholder="Dukan ka poora pata aur landmark likhein" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none"></textarea>
+                </div>
+
+                <!-- 8 & 9. Latitude & Longitude (Column H & I) -->
+                <div>
+                    <label class="block text-gray-700 font-medium mb-1">Google Map Location (Latitude & Longitude) <span class="text-red-500">*</span></label>
+                    <div class="flex gap-2">
+                        <input type="text" id="latLong" required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none font-mono text-sm">
+                        <button type="button" onclick="getLocation()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium px-4 py-2 rounded-lg transition whitespace-nowrap">📍 Get Location</button>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Sample Format: <b>21.2514, 81.6296</b> (Lat aur Long alag-alag columns me save honge).</p>
+                </div>
+
+                <!-- Submit Button & Validation Status Box -->
+                <div class="text-center pt-4">
+                    <button type="submit" id="submitBtn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        Submit Entry
+                    </button>
+                    <p id="validationWarning" class="text-red-600 font-semibold text-sm mt-2 hidden"></p>
+                </div>
+            </form>
+            <div id="formMessage" class="text-center font-medium mt-3"></div>
         </div>
 
-        <!-- Message / Error area -->
-        <div id="message" class="text-center text-red-600 font-medium my-4"></div>
-
-        <!-- Result Container (Tables) -->
-        <div id="resultContainer" class="hidden space-y-8">
+        <!-- ================= SECTION 2: STATUS CHECK PORTAL ================= -->
+        <div id="sectionStatusCheck" class="hidden space-y-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-2">Check Your Branding Status</h2>
+            <p class="text-gray-600 text-sm mb-4">Apni 12-digit ki CSC ID darj karke apna profile aur status check karein.</p>
             
-            <!-- Table 1: Profile Summary -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">1. VLE Profile Summary</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
-                        <thead class="bg-indigo-50 text-indigo-900">
-                            <tr>
-                                <th class="border border-gray-200 px-4 py-3">District</th>
-                                <th class="border border-gray-200 px-4 py-3">CSC ID</th>
-                                <th class="border border-gray-200 px-4 py-3">VLE Name</th>
-                                <th class="border border-gray-200 px-4 py-3">Mobile No</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="bg-white hover:bg-gray-50">
-                                <td id="resDistrict" class="border border-gray-200 px-4 py-3"></td>
-                                <td id="resCscId" class="border border-gray-200 px-4 py-3 font-semibold"></td>
-                                <td id="resVleName" class="border border-gray-200 px-4 py-3"></td>
-                                <td id="resMobile" class="border border-gray-200 px-4 py-3"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
+                <input type="text" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" inputmode="numeric" 
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                    class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">  
+                <button onclick="searchData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
+                    Search Status
+                </button>
             </div>
 
-            <!-- Table 2: Branding & Submission Details -->
-            <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">2. Branding & Verification Records</h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
-                        <thead class="bg-gray-50 text-gray-800">
-                            <tr>
-                                <th class="border border-gray-200 px-4 py-3">S.No.</th>
-                                <th class="border border-gray-200 px-4 py-3">Date & Time</th>
-                                <th class="border border-gray-200 px-4 py-3">Block</th>
-                                <th class="border border-gray-200 px-4 py-3">Google Map Location</th>
-                                <th class="border border-gray-200 px-4 py-3">Photo Link</th>
-                                <th class="border border-gray-200 px-4 py-3">Status / Remark</th>
-                            </tr>
-                        </thead>
-                        <tbody id="recordsTableBody">
-                            <!-- Dynamic rows -->
-                        </tbody>
-                    </table>
-                </div>
+            <div id="loading" class="hidden text-center my-6">
+                <div class="inline-block animate-spin rounded-full h-10 w-10 border-4 border-indigo-600 border-t-transparent"></div>
+                <p class="text-gray-600 mt-2 font-medium">Data load ho raha hai...</p>
             </div>
 
+            <div id="message" class="text-center font-medium my-4"></div>
+
+            <div id="resultContainer" class="hidden space-y-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">Profile Summary</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
+                            <thead class="bg-indigo-50 text-indigo-900">
+                                <tr>
+                                    <th class="border border-gray-200 px-4 py-3">District</th>
+                                    <th class="border border-gray-200 px-4 py-3">CSC ID</th>
+                                    <th class="border border-gray-200 px-4 py-3">VLE Name</th>
+                                    <th class="border border-gray-200 px-4 py-3">Mobile No</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white">
+                                    <td id="resDistrict" class="border border-gray-200 px-4 py-3"></td>
+                                    <td id="resCscId" class="border border-gray-200 px-4 py-3 font-semibold"></td>
+                                    <td id="resVleName" class="border border-gray-200 px-4 py-3"></td>
+                                    <td id="resMobile" class="border border-gray-200 px-4 py-3"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">Branding Records</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
+                            <thead class="bg-gray-50 text-gray-800">
+                                <tr>
+                                    <th class="border border-gray-200 px-4 py-3">S.No.</th>
+                                    <th class="border border-gray-200 px-4 py-3">Date & Time</th>
+                                    <th class="border border-gray-200 px-4 py-3">Block</th>
+                                    <th class="border border-gray-200 px-4 py-3">Map Location</th>
+                                    <th class="border border-gray-200 px-4 py-3">Photo Link</th>
+                                    <th class="border border-gray-200 px-4 py-3">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recordsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         </div>
+
     </div>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvJthmc539JPsbYAhyXBFcIU309meElCT6tMm2ctL37S5SO6SkbafGKqOzhcf1Do4_/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzCIVhYltXttOFEVta3MGprydflFx1yosaEYgYB7ujuaBsd5s7zNnnPAhFeSc2F4gYz/exec";
+ 
+        const blockData = {
+            "Balod": ["Balod", "Daundi", "Daundi Lohara", "Gunderdehi", "Gurur"],
+            "Baloda Bazar": ["Baloda Bazar", "Bhatapara", "Kasdol", "Palari", "Simga", "Tilda (Part)"],
+            "Balrampur": ["Balrampur", "Ramanujganj", "Wadrafnagar", "Kusmi", "Shankargarh", "Rajpur"],
+            "Bastar": ["Bastar", "Bastanar", "Darbha", "Jagdalpur", "Lohandiguda", "Tokapal"],
+            "Bemetara": ["Bemetara", "Berla", "Nawagarh", "Saja"],
+            "Bijapur": ["Bijapur", "Bhairamgarh", "Bhopalpatnam", "Usoor"],
+            "Bilaspur": ["Bilaspur", "Bilha", "Kota", "Masturi", "Takhatpur"],
+            "Dantewada": ["Dantewada", "Geedam", "Kwakonda", "Kuwakonda"],
+            "Dhamtari": ["Dhamtari", "Magarlod", "Nagri", "Kurud"],
+            "Durg": ["Durg", "Bhilai", "Patan", "Jamul"],
+            "Gariaband": ["Gariaband", "Chhura", "Deobhog", "Mainpur", "Rajim"],
+            "Gaurella-Pendra-Marwahi": ["Gaurella", "Pendra", "Marwahi"],
+            "Janjgir-Champa": ["Akaltaru", "Bamhnidih", "Baloda", "Dabhra", "Janjgir", "Nawagarh", "Paltan"],
+            "Jashpur": ["Jashpur", "Bagbahara", "Duldula", "Kansabel", "Manora", "Pathalgaon", "Farsabahar"],
+            "Kabirdham": ["Kawardha", "Bodla", "Sahaspur Lohara", "Pandariya"],
+            "Kanker": ["Antagarh", "Bhanupratappur", "Charama", "Durgkondal", "Kanker", "Koyalibeda"],
+            "Khairagarh-Chhuikhadan-Gandai": ["Chhuikhadan", "Gandai", "Khairagarh"],
+            "Kondagaon": ["Bakeswar", "Kondagaon", "Makdi", "Pharasgaon", "Keshkal"],
+            "Korba": ["Katghora", "Korba", "Pali", "Kartala", "Podi Uproda"],
+            "Koriya": ["Baikunthpur", "Bharatpur", "Sonhat"],
+            "Mahasamund": ["Bagbahara", "Basna", "Mahasamund", "Pithora", "Saraipali"],
+            "Manendragarh-Chirmiri-Bharatpur": ["Manendragarh", "Chirmiri", "Bharatpur"],
+            "Mohla-Manpur-Ambagarh Chowki": ["Ambagarh Chowki", "Manpur", "Mohla"],
+            "Mungeli": ["Lormi", "Mungeli", "Pathariya"],
+            "Narayanpur": ["Narayanpur", "Orchha"],
+            "Raigarh": ["Baramkela", "Dharamjaigarh", "Gharghoda", "Lailunga", "Pussore", "Raigarh"],
+            "Raipur": ["Abhanpur", "Arang", "Dharsiwa", "Tilda", "Raipur Rural", "Raipur Urban"],
+            "Rajnandgaon": ["Chhuriya", "Dongargaon", "Dongargarh", "Rajnandgaon"],
+            "Sakti": ["Dabhra", "Jaijaipur", "Malkharoda", "Sakti"],
+            "Sarangarh-Bilaigarh": ["Baramkela", "Bilaigarh", "Sarangarh"],
+            "Sukma": ["Chhindgarh", "KontaSukma", "Konta"],
+            "Surajpur": ["Bhaiyathan", "Odagi", "Pratappur", "Premnagar", "Ramanujnagar", "Surajpur"],
+            "Surguja": ["Ambikapur", "Batauli", "Darima", "Lakhanpur", "Lundra", "Mainpat", "Sitapur"]
+        };
 
-        // Enter key press support for search
-        document.getElementById('cscIdInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                searchData();
+        function loadBlocks() {
+            const districtSelect = document.getElementById('district');
+            const blockSelect = document.getElementById('block');
+            const selectedDistrict = districtSelect.value;
+
+            blockSelect.innerHTML = '<option value="">Select Block</option>';
+            if (selectedDistrict && blockData[selectedDistrict]) {
+                blockData[selectedDistrict].forEach(block => {
+                    const option = document.createElement('option');
+                    option.value = block;
+                    option.textContent = block;
+                    blockSelect.appendChild(option);
+                });
             }
-        });
+        }
 
+        function switchTab(tab) {
+            const secNew = document.getElementById('sectionNewEntry');
+            const secStatus = document.getElementById('sectionStatusCheck');
+            const tabNew = document.getElementById('tabNewEntry');
+            const tabStatus = document.getElementById('tabStatusCheck');
+
+            if (tab === 'newEntry') {
+                secNew.classList.remove('hidden');
+                secStatus.classList.add('hidden');
+                tabNew.className = "py-2 px-6 font-semibold text-indigo-600 border-b-2 border-indigo-600 focus:outline-none transition duration-200";
+                tabStatus.className = "py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200";
+            } else {
+                secNew.classList.add('hidden');
+                secStatus.classList.remove('hidden');
+                tabStatus.className = "py-2 px-6 font-semibold text-indigo-600 border-b-2 border-indigo-600 focus:outline-none transition duration-200";
+                tabNew.className = "py-2 px-6 font-semibold text-gray-500 hover:text-indigo-600 focus:outline-none transition duration-200";
+            }
+        }
+
+        function validateCscId(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            const msg = document.getElementById('cscLookupMsg');
+            if (input.value.length > 0 && input.value.length < 12) {
+                msg.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein (" + input.value.length + "/12)";
+                msg.className = "text-xs font-medium block mt-1 text-orange-600";
+            } else if (input.value.length === 12) {
+                msg.innerText = "✓ 12-digit CSC ID valid hai.";
+                msg.className = "text-xs font-medium block mt-1 text-green-600";
+            } else {
+                msg.innerText = "Kewal 12 anko (digits) ki sankhya darj karein.";
+                msg.className = "text-xs font-medium block mt-1 text-gray-500";
+            }
+        }
+
+        function getLocation() {
+            const latLongInput = document.getElementById('latLong');
+            if (navigator.geolocation) {
+                latLongInput.value = "Location fetch ho rahi hai...";
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        latLongInput.value = `${position.coords.latitude}, ${position.coords.longitude}`;
+                    },
+                    (error) => {
+                        latLongInput.value = "";
+                        alert("Location access nahi mili. Format use karein: 21.2514, 81.6296");
+                    }
+                );
+            } else {
+                alert("Browser Geolocation support nahi karta.");
+            }
+        }
+
+        // Auto-fill & Status Check via Fetch API
+        async function checkExistingCscId(cscId) {
+            if (!cscId || cscId.length < 12) return;
+            
+            const lookupMsg = document.getElementById('cscLookupMsg');
+            const submitBtn = document.getElementById('submitBtn');
+            const warningBox = document.getElementById('validationWarning');
+            
+            lookupMsg.innerText = "Checking existing record...";
+            lookupMsg.className = "text-xs font-medium text-blue-600 block mt-1";
+
+            try {
+                const response = await fetch(`${WEB_APP_URL}?action=check&cscid=${encodeURIComponent(cscId)}`);
+                const res = await response.json();
+
+                if (res.exists) {
+                    document.getElementById('district').value = res.district || "";
+                    loadBlocks();
+                    document.getElementById('block').value = res.block || "";
+                    document.getElementById('vleName').value = res.vleName || "";
+                    document.getElementById('mobileNo').value = res.mobileNo || "";
+                    document.getElementById('address').value = res.address || "";
+                    if(res.lat && res.lon) {
+                        document.getElementById('latLong').value = `${res.lat}, ${res.lon}`;
+                    }
+
+                    const photoContainer = document.getElementById('existingPhotoContainer');
+                    if (res.photoLink) {
+                        photoContainer.innerHTML = `Pichhli Uploaded Photo: <a href="${res.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>`;
+                    } else {
+                        photoContainer.innerHTML = "";
+                    }
+
+                    const remarkL = (res.remarkL || "").toUpperCase();
+                    if (remarkL.includes("REJECT")) {
+                        lookupMsg.innerText = "✓ Status Rejected hai. Aap nayi entry submit kar sakte hain.";
+                        lookupMsg.className = "text-xs font-medium text-green-600 block mt-1";
+                        submitBtn.disabled = false;
+                        warningBox.classList.add('hidden');
+                    } else {
+                        lookupMsg.innerText = "⚠️ Status: " + res.remarkL;
+                        lookupMsg.className = "text-xs font-medium text-red-600 block mt-1";
+                        submitBtn.disabled = true;
+                        warningBox.classList.remove('hidden');
+                        warningBox.innerText = "🛑 Entry Blocked: Is CSC ID ka status '" + res.remarkL + "' hai (Rejected nahi hai), isiliye nayi entry allow nahi hai!";
+                    }
+                } else {
+                    lookupMsg.innerText = "✓ Nayi CSC ID hai (Fresh Entry).";
+                    lookupMsg.className = "text-xs font-medium text-green-600 block mt-1";
+                    submitBtn.disabled = false;
+                    warningBox.classList.add('hidden');
+                    document.getElementById('existingPhotoContainer').innerHTML = "";
+                }
+            } catch (err) {
+                console.error(err);
+                lookupMsg.innerText = "Error checking CSC ID.";
+            }
+        }
+
+        // Form Submit via Fetch POST API
+        function submitNewEntry(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('submitBtn');
+            const formMsg = document.getElementById('formMessage');
+            const fileInput = document.getElementById('photoFile');
+
+            const latLongVal = document.getElementById('latLong').value.trim();
+            const latLonParts = latLongVal.split(',');
+
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Submitting...";
+            formMsg.innerText = "";
+
+            function sendData(base64Data = "", mimeType = "", fileName = "") {
+                const formData = {
+                    action: "submit",
+                    district: document.getElementById('district').value.trim(),
+                    block: document.getElementById('block').value.trim(),
+                    cscId: document.getElementById('newCscId').value.trim(),
+                    vleName: document.getElementById('vleName').value.trim(),
+                    mobileNo: document.getElementById('mobileNo').value.trim(),
+                    address: document.getElementById('address').value.trim(),
+                    lat: latLonParts[0] ? latLonParts[0].trim() : "",
+                    lon: latLonParts[1] ? latLonParts[1].trim() : "",
+                    fileData: base64Data,
+                    mimeType: mimeType,
+                    fileName: fileName
+                };
+
+                fetch(WEB_APP_URL, {
+                    method: "POST",
+                    body: JSON.stringify(formData)
+                })
+                .then(res => res.json())
+                .then(result => {
+                    formMsg.className = "text-center font-medium mt-3 " + (result.success ? "text-green-600" : "text-red-600");
+                    formMsg.innerText = result.message;
+                    if (result.success) {
+                        document.getElementById('brandingForm').reset();
+                        document.getElementById('existingPhotoContainer').innerHTML = "";
+                        document.getElementById('cscLookupMsg').innerText = "";
+                    }
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Submit Entry";
+                })
+                .catch(err => {
+                    formMsg.className = "text-center font-medium mt-3 text-red-600";
+                    formMsg.innerText = "Error: " + err.message;
+                    submitBtn.disabled = false;
+                    submitBtn.innerText = "Submit Entry";
+                });
+            }
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const base64Data = event.target.result.split(',')[1];
+                    sendData(base64Data, file.type, file.name);
+                };
+                reader.readAsDataURL(file);
+            } else {
+                sendData();
+            }
+        }
+
+        // Status Check Portal Search via Fetch API
         async function searchData() {
             const cscId = document.getElementById('cscIdInput').value.trim();
             const messageDiv = document.getElementById('message');
@@ -108,20 +457,16 @@
             messageDiv.innerText = "";
             resultContainer.classList.add('hidden');
 
-            // 12-digit numeric validation
-            if (!cscId) {
-                messageDiv.innerText = "Kripya CSC ID darj karein.";
-                return;
-            }
-            if (!/^\d{12}$/.test(cscId)) {
-                messageDiv.innerText = "CSC ID kewal 12 anko (digits) ki honi chahiye.";
+            if (!cscId || cscId.length !== 12) {
+                messageDiv.className = "text-center text-red-600 font-medium my-4";
+                messageDiv.innerText = "Kripya 12-digit ki valid CSC ID darj karein.";
                 return;
             }
 
             loadingDiv.classList.remove('hidden');
 
             try {
-                const response = await fetch(`${WEB_APP_URL}?cscid=${encodeURIComponent(cscId)}`);
+                const response = await fetch(`${WEB_APP_URL}?action=lookup&cscid=${encodeURIComponent(cscId)}`);
                 const data = await response.json();
 
                 loadingDiv.classList.add('hidden');
@@ -147,19 +492,8 @@
                             remarkClass += "bg-yellow-100 text-yellow-800";
                         }
 
-                        let photoHtml = "-";
-                        if (record.photoLink) {
-                            photoHtml = `<a href="${record.photoLink}" target="_blank" class="text-blue-600 underline hover:text-blue-800 font-medium">View Photo</a>`;
-                        }
-
-                        // Google Maps clickable hyperlink for Lat, Long
-                        let mapHtml = "-";
-                        if (record.lat && record.lon) {
-                            const mapUrl = `https://www.google.com/maps?q=${record.lat},${record.lon}`;
-                            mapHtml = `<a href="${mapUrl}" target="_blank" class="text-indigo-600 underline hover:text-indigo-800 font-mono text-sm">📍 ${record.latLong}</a>`;
-                        } else if (record.latLong) {
-                            mapHtml = `<span class="font-mono text-sm">${record.latLong}</span>`;
-                        }
+                        let photoHtml = record.photoLink ? `<a href="${record.photoLink}" target="_blank" class="text-blue-600 underline font-medium">View Photo</a>` : "-";
+                        let mapHtml = record.latLong ? `<span class="font-mono text-sm">${record.latLong}</span>` : "-";
 
                         row.innerHTML = `
                             <td class="border border-gray-200 px-4 py-3">${index + 1}</td>
@@ -174,12 +508,13 @@
 
                     resultContainer.classList.remove('hidden');
                 } else {
-                    messageDiv.innerText = "Is CSC ID ka koi record nahi mila ya ID galat hai.";
+                    messageDiv.className = "text-center text-red-600 font-medium my-4";
+                    messageDiv.innerText = "Is CSC ID ka koi record nahi mila.";
                 }
             } catch (error) {
                 loadingDiv.classList.add('hidden');
-                messageDiv.innerText = "Data fetch karne me samasya aayi. Kripya punah prayas karein.";
-                console.error(error);
+                messageDiv.className = "text-center text-red-600 font-medium my-4";
+                messageDiv.innerText = "Data fetch karne me samasya aayi.";
             }
         }
     </script>
