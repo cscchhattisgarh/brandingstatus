@@ -274,6 +274,19 @@
             "Surguja": ["Ambikapur", "Batauli", "Darima", "Lakhanpur", "Lundra", "Mainpat", "Sitapur"]
         };
 
+        // Status Check input par Enter key support add karne ke liye
+        document.addEventListener("DOMContentLoaded", function() {
+            const cscIdInputEl = document.getElementById('cscIdInput');
+            if (cscIdInputEl) {
+                cscIdInputEl.addEventListener('keypress', function(event) {
+                    if (event.key === 'Enter') {
+                        event.preventDefault();
+                        searchData();
+                    }
+                });
+            }
+        });
+
         function loadBlocks() {
             const districtSelect = document.getElementById('district');
             const blockSelect = document.getElementById('block');
