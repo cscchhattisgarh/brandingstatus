@@ -139,6 +139,9 @@
                         <input type="text" id="latLong" disabled required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none font-mono text-sm">
                         <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-medium px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap">📍 Get Location</button>
                     </div>
+                    <p class="text-xs text-gray-500 mt-1.5">
+                        💡 <b>Tip:</b> Aap ya toh manual Latitude & Longitude is format me type karein: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location lene ke liye <b>'Get Location'</b> button par click karein.
+                    </p>
                 </div>
 
                 <!-- Submit Button -->
@@ -334,7 +337,7 @@
                         el.classList.add('bg-white');
                     } else {
                         el.classList.add('bg-gray-100', 'cursor-not-allowed');
-                        el.classList.remove('bg-white');
+                        el.classList.remove('bg-gray-100');
                     }
                 }
             });
@@ -433,10 +436,10 @@
                     const remarkL = (res.remarkL || "").toUpperCase();
 
                     if (remarkL.includes("REJECT")) {
-                        // REJECTED CASE: Unlock form, auto-populate everything
+                        // REJECTED CASE: Unlock form, auto-populate District and Block correctly
                         setFormEnabled(true);
                         
-                        // Exact District match logic
+                        // Exact District match
                         const districtSelect = document.getElementById('district');
                         let matchedDistrict = "";
                         for (let opt of districtSelect.options) {
@@ -446,9 +449,11 @@
                             }
                         }
                         districtSelect.value = matchedDistrict;
+                        
+                        // Load blocks for this district first
                         loadBlocks();
 
-                        // Exact Block match logic
+                        // Exact Block match after loading blocks
                         const blockSelect = document.getElementById('block');
                         let matchedBlock = "";
                         for (let opt of blockSelect.options) {
@@ -476,7 +481,7 @@
                         showPopup("Status: Rejected", "Aapka pichhla status Rejected hai. Aap nayi photo aur details daal kar form resubmit kar sakte hain.", "rejected", false);
                         warningBox.classList.add('hidden');
                     } else {
-                        // APPROVED or PENDING CASE: Lock form & BLANK all other fields so user doesn't see old data
+                        // APPROVED or PENDING CASE: Lock form and keep all fields completely blank
                         setFormEnabled(false);
                         document.getElementById('district').value = "";
                         document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Karein</option>';
@@ -640,7 +645,7 @@
                         tbody.appendChild(row);
                     });
 
-                    resultContainer.classList.remove('hidden');
+                    resultContainer.classList.add('hidden');
                 } else {
                     messageDiv.className = "text-center text-red-600 font-medium my-4";
                     messageDiv.innerText = "Is CSC ID ka koi record nahi mila.";
