@@ -547,6 +547,15 @@
             const fileInput = document.getElementById('photoFile');
 
             const latLongVal = document.getElementById('latLong').value.trim();
+
+            // Yahan check kar rahe hain ki location fetch ho rahi hai ya invalid text hai kya
+            if (latLongVal.includes("fetch") || latLongVal === "" || !latLongVal.includes(',')) {
+                alert("Kripya pehle valid GPS Location fetch karein ya sahi format me daalein (e.g., 21.2514, 81.6296).");
+                submitBtn.disabled = false;
+                submitBtn.innerText = "Submit";
+                return;
+            }
+
             const latLonParts = latLongVal.split(',');
 
             submitBtn.disabled = true;
