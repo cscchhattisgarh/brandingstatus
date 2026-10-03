@@ -48,7 +48,7 @@
         <div id="sectionNewEntry" class="space-y-4">
             <h2 class="text-xl font-semibold text-gray-800 mb-2">VLE Branding Photo Uploading Form</h2>
             <p class="text-sm text-gray-500 mb-4 bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> Enter kare. Status check hone ke baad hi baaki fields enable hongi.
+                💡 <b>Instruction:</b> Sabse pehle apni <b>12-digit CSC ID</b> Enter kare (9th-10th '00' aur 11th '1' hona anivarya hai). Status check hone ke baad hi baaki fields enable hongi.
             </p>
 
             <form id="brandingForm" onsubmit="submitNewEntry(event)" class="space-y-4">
@@ -124,7 +124,7 @@
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">Mobile No <span class="text-red-500">*</span></label>
                         <input type="text" id="mobileNo" disabled maxlength="10" inputmode="numeric" required placeholder="10-digit Mobile Number"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
                     </div>
 
@@ -332,16 +332,26 @@
             }
         }
 
+        // Updated CSC ID Validation with 9th-10th '00' and 11th '1' check
         function validateCscId(input) {
             input.value = input.value.replace(/[^0-9]/g, '');
             const msg = document.getElementById('cscLookupMsg');
-            if (input.value.length > 0 && input.value.length < 12) {
-                msg.innerText = "⚠️ Kripya puri 12-digit ki CSC ID darj karein (" + input.value.length + "/12)";
+            const val = input.value;
+
+            if (val.length > 0 && val.length < 12) {
+                msg.innerText = "⚠️ Kripya puri 12-digit ki CSC ID darj karein (" + val.length + "/12)";
                 msg.className = "text-xs font-medium block mt-1 text-orange-600";
                 setFormEnabled(false);
-            } else if (input.value.length === 12) {
-                msg.innerText = "✓ 12-digit CSC ID valid hai.";
-                msg.className = "text-xs font-medium block mt-1 text-green-600";
+            } else if (val.length === 12) {
+                // Check 9th-10th digits as '00' (index 8, 9) and 11th digit as '1' (index 10)
+                if (val.substring(8, 10) === "00" && val.charAt(10) === "1") {
+                    msg.innerText = "✓ 12-digit CSC ID format valid hai.";
+                    msg.className = "text-xs font-medium block mt-1 text-green-600";
+                } else {
+                    msg.innerText = "❌ CSC ID format galat hai: 9th-10th '00' aur 11th '1' hona chahiye.";
+                    msg.className = "text-xs font-medium block mt-1 text-red-600";
+                    setFormEnabled(false);
+                }
             } else {
                 msg.innerText = "Kewal 12 digits ki sankhya darj kare.";
                 msg.className = "text-xs font-medium block mt-1 text-gray-500";
@@ -458,6 +468,11 @@
 
         async function checkExistingCscId(cscId) {
             if (!cscId || cscId.length !== 12) return;
+
+            // Extra validation check before lookup
+            if (cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
+                return;
+            }
             
             const loader = document.getElementById('fullPageLoader');
             const loaderText = document.getElementById('loaderText');
@@ -559,9 +574,14 @@
             const formMsg = document.getElementById('formMessage');
             const fileInput = document.getElementById('photoFile');
 
+            const cscId = document.getElementById('newCscId').value.trim();
+            if (cscId.length !== 12 || cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
+                alert("CSC ID ka format aamya (invalid) hai. 9th-10th digits '00' aur 11th digit '1' hona chahiye.");
+                return;
+            }
+
             const latLongVal = document.getElementById('latLong').value.trim();
 
-            // Yahan check kar rahe hain ki location fetch ho rahi hai ya invalid text hai kya
             if (latLongVal.includes("fetch") || latLongVal === "" || !latLongVal.includes(',')) {
                 alert("Kripya pehle valid GPS Location fetch karein ya sahi format me daalein (e.g., 21.2514, 81.6296).");
                 submitBtn.disabled = false;
@@ -580,7 +600,6 @@
             loaderText.innerText = "Saving your data, please wait...";
             loader.classList.remove('hidden');
 
-            const cscId = document.getElementById('newCscId').value.trim();
             const district = document.getElementById('district').value;
             const block = document.getElementById('block').value;
             const vleName = document.getElementById('vleName').value.trim();
