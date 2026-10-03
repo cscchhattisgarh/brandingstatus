@@ -124,8 +124,10 @@
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">Mobile No <span class="text-red-500">*</span></label>
                         <input type="text" id="mobileNo" disabled maxlength="10" inputmode="numeric" required placeholder="10-digit Mobile Number"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '').slice(0, 10)"
+                            oninput="validateMobileNoInput(this)"
+                            onblur="validateMobileNoBlur(this)"
                             class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
+                        <span id="mobileMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 10 digits ka mobile number darj kare.</span>
                     </div>
 
                     <!-- 6. Photo Upload -->
@@ -182,10 +184,13 @@
             <p class="text-gray-600 text-sm mb-4">Apni 12-digit ki CSC ID darj karke apna profile aur status check kare.</p>
             
             <div class="flex flex-col sm:flex-row gap-3 justify-center mb-6">
-                <input type="text" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" inputmode="numeric" 
-                    oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-                    class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">  
-                <button onclick="searchData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md">
+                <div>
+                    <input type="text" id="cscIdInput" placeholder="Enter 12-digit CSC ID" maxlength="12" inputmode="numeric" 
+                        oninput="validateStatusCscId(this)"
+                        class="border border-gray-300 rounded-lg px-4 py-3 w-full sm:w-80 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-lg">  
+                    <span id="statusCscMsg" class="text-xs font-medium block mt-1 text-gray-500 text-center sm:text-left">Kewal 12 digits ki sankhya darj kare.</span>
+                </div>
+                <button onclick="searchData()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-md h-fit">
                     Search Status
                 </button>
             </div>
@@ -332,7 +337,7 @@
             }
         }
 
-        // Updated CSC ID Validation with 9th-10th '00' and 11th '1' check
+        // CSC ID Validation with 9th-10th '00' and 11th '1' check
         function validateCscId(input) {
             input.value = input.value.replace(/[^0-9]/g, '');
             const msg = document.getElementById('cscLookupMsg');
@@ -343,9 +348,8 @@
                 msg.className = "text-xs font-medium block mt-1 text-orange-600";
                 setFormEnabled(false);
             } else if (val.length === 12) {
-                // Check 9th-10th digits as '00' (index 8, 9) and 11th digit as '1' (index 10)
                 if (val.substring(8, 10) === "00" && val.charAt(10) === "1") {
-                    msg.innerText = "✓ 12-digit CSC ID format valid hai.";
+                    msg.innerText = "✓ 12-digit CSC ID format valid hai (12/12).";
                     msg.className = "text-xs font-medium block mt-1 text-green-600";
                 } else {
                     msg.innerText = "❌ CSC ID format galat hai: 9th-10th '00' aur 11th '1' hona chahiye.";
@@ -356,6 +360,61 @@
                 msg.innerText = "Kewal 12 digits ki sankhya darj kare.";
                 msg.className = "text-xs font-medium block mt-1 text-gray-500";
                 setFormEnabled(false);
+            }
+        }
+
+        // Status Check Panel CSC ID Validation
+        function validateStatusCscId(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            const msg = document.getElementById('statusCscMsg');
+            const val = input.value;
+
+            if (val.length > 0 && val.length < 12) {
+                msg.innerText = "⚠️ Kripya puri 12-digit ki CSC ID darj karein (" + val.length + "/12)";
+                msg.className = "text-xs font-medium block mt-1 text-orange-600";
+            } else if (val.length === 12) {
+                if (val.substring(8, 10) === "00" && val.charAt(10) === "1") {
+                    msg.innerText = "✓ 12-digit CSC ID format valid hai (12/12).";
+                    msg.className = "text-xs font-medium block mt-1 text-green-600";
+                } else {
+                    msg.innerText = "❌ CSC ID format galat hai: 9th-10th '00' aur 11th '1' hona chahiye.";
+                    msg.className = "text-xs font-medium block mt-1 text-red-600";
+                }
+            } else {
+                msg.innerText = "Kewal 12 digits ki sankhya darj kare.";
+                msg.className = "text-xs font-medium block mt-1 text-gray-500";
+            }
+        }
+
+        // Mobile Number Live Counter Validation (oninput)
+        function validateMobileNoInput(input) {
+            input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+            const msg = document.getElementById('mobileMsg');
+            const val = input.value;
+
+            if (val.length > 0 && val.length < 10) {
+                msg.innerText = "⚠️ Mobile number 10 digits ka hona chahiye (" + val.length + "/10)";
+                msg.className = "text-xs font-medium block mt-1 text-orange-600";
+            } else if (val.length === 10) {
+                msg.innerText = "✓ Mobile number valid hai (10/10).";
+                msg.className = "text-xs font-medium block mt-1 text-green-600";
+            } else {
+                msg.innerText = "Kewal 10 digits ka mobile number darj kare.";
+                msg.className = "text-xs font-medium block mt-1 text-gray-500";
+            }
+        }
+
+        // Mobile Number onBlur Validation (tab/focus out check)
+        function validateMobileNoBlur(input) {
+            const msg = document.getElementById('mobileMsg');
+            const val = input.value.trim();
+
+            if (val.length > 0 && val.length < 10) {
+                msg.innerText = "❌ 10 digit se kam nahi ho sakta (" + val.length + "/10 digits). Kripya poora number bharein.";
+                msg.className = "text-xs font-medium block mt-1 text-red-600";
+            } else if (val.length === 10) {
+                msg.innerText = "✓ Mobile number valid hai (10/10).";
+                msg.className = "text-xs font-medium block mt-1 text-green-600";
             }
         }
 
@@ -375,7 +434,6 @@
                 }
             });
 
-            // Special handling for Current Location Button styling
             const locBtn = document.getElementById('locBtn');
             if (locBtn) {
                 locBtn.disabled = !enable;
@@ -430,6 +488,7 @@
                     closePopup();
                     switchTab('statusCheck');
                     document.getElementById('cscIdInput').value = cscId;
+                    validateStatusCscId(document.getElementById('cscIdInput'));
                     searchData();
                 };
                 btnContainer.appendChild(statusBtn);
@@ -469,7 +528,6 @@
         async function checkExistingCscId(cscId) {
             if (!cscId || cscId.length !== 12) return;
 
-            // Extra validation check before lookup
             if (cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
                 return;
             }
@@ -558,7 +616,7 @@
                     document.getElementById('photoFile').value = "";
                     document.getElementById('existingPhotoContainer').innerHTML = "";
 
-                    showPopup("Fresh CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nhi ki hai.Isliye Aap Photo Upload Kar sakte hai.", "approved", false);
+                    showPopup("Fresh CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nhi ki hai. Isliye Aap Photo Upload Kar sakte hai.", "approved", false);
                     warningBox.classList.add('hidden');
                 }
             } catch (err) {
@@ -577,6 +635,13 @@
             const cscId = document.getElementById('newCscId').value.trim();
             if (cscId.length !== 12 || cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
                 alert("CSC ID ka format aamya (invalid) hai. 9th-10th digits '00' aur 11th digit '1' hona chahiye.");
+                return;
+            }
+
+            const mobileNoVal = document.getElementById('mobileNo').value.trim();
+            if (mobileNoVal.length !== 10) {
+                alert("Mobile number theek 10 digits ka hona anivarya hai.");
+                document.getElementById('mobileNo').focus();
                 return;
             }
 
@@ -603,7 +668,6 @@
             const district = document.getElementById('district').value;
             const block = document.getElementById('block').value;
             const vleName = document.getElementById('vleName').value.trim();
-            const mobileNo = document.getElementById('mobileNo').value.trim();
             const address = document.getElementById('address').value.trim();
             const lat = latLonParts[0] ? latLonParts[0].trim() : "";
             const lon = latLonParts[1] ? latLonParts[1].trim() : "";
@@ -619,7 +683,7 @@
                         district: district,
                         block: block,
                         vleName: vleName,
-                        mobileNo: mobileNo,
+                        mobileNo: mobileNoVal,
                         address: address,
                         lat: lat,
                         lon: lon,
@@ -636,7 +700,7 @@
                     district: district,
                     block: block,
                     vleName: vleName,
-                    mobileNo: mobileNo,
+                    mobileNo: mobileNoVal,
                     address: address,
                     lat: lat,
                     lon: lon
@@ -667,6 +731,8 @@
                     setFormEnabled(false);
                     document.getElementById('cscLookupMsg').innerText = "Kewal 12 digits ki sankhya darj kare.";
                     document.getElementById('cscLookupMsg').className = "text-xs font-medium block mt-1 text-gray-500";
+                    document.getElementById('mobileMsg').innerText = "Kewal 10 digits ka mobile number darj kare.";
+                    document.getElementById('mobileMsg').className = "text-xs font-medium block mt-1 text-gray-500";
                     document.getElementById('existingPhotoContainer').innerHTML = "";
                 } else {
                     formMsg.className = "text-center font-medium mt-3 text-red-600";
@@ -694,6 +760,13 @@
             if (cscId.length !== 12) {
                 message.className = "text-center font-medium my-4 text-orange-600";
                 message.innerText = "⚠️ Kripya poori 12-digit ki CSC ID darj karein.";
+                resultContainer.classList.add('hidden');
+                return;
+            }
+
+            if (cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
+                message.className = "text-center font-medium my-4 text-red-600";
+                message.innerText = "❌ CSC ID format galat hai: 9th-10th '00' aur 11th '1' hona chahiye.";
                 resultContainer.classList.add('hidden');
                 return;
             }
