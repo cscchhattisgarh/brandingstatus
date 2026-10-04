@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen py-10 px-4">
-    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 relative">
+    <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 relative">
         
         <!-- Center Spinner Modal (CSC ID check & Form Submit dono ke liye) -->
         <div id="fullPageLoader" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -170,7 +170,7 @@
         <!-- ================= STATUS POPUP MODAL ================= -->
         <div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
             <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
-                <div id="popupIcon" class="text-5xl">ℹ️️</div>
+                <div id="popupIcon" class="text-5xl">ℹ</div>
                 <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
                 <p id="popupMessage" class="text-gray-600 text-sm"></p>
                 
@@ -239,6 +239,7 @@
                                     <th class="border border-gray-200 px-4 py-3">Map Location</th>
                                     <th class="border border-gray-200 px-4 py-3">Photo Link</th>
                                     <th class="border border-gray-200 px-4 py-3">Status</th>
+                                    <th class="border border-gray-200 px-4 py-3">Rejection Reason / Remark</th>
                                 </tr>
                             </thead>
                             <tbody id="recordsTableBody"></tbody>
@@ -393,7 +394,7 @@
             const val = input.value;
 
             if (val.length > 0 && val.length < 10) {
-                msg.innerText = "⚠️ Mobile number 10 digits ka hona chahiye (" + val.length + "/10)";
+                msg.innerText = "⚠️️ Mobile number 10 digits ka hona chahiye (" + val.length + "/10)";
                 msg.className = "text-xs font-medium block mt-1 text-orange-600";
             } else if (val.length === 10) {
                 msg.innerText = "✓ Mobile number valid hai (10/10).";
@@ -616,7 +617,7 @@
                     document.getElementById('photoFile').value = "";
                     document.getElementById('existingPhotoContainer').innerHTML = "";
 
-                    showPopup("Fresh CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nhi ki hai. Isliye Aap Photo Upload Kar sakte hai.", "approved", false);
+                    showPopup("Fresh CSC ID", "Aapne Abhi तक Branding ki koi bhi Photo Upload Nhi ki hai. Isliye Aap Photo Upload Kar sakte hai.", "approved", false);
                     warningBox.classList.add('hidden');
                 }
             } catch (err) {
@@ -807,10 +808,10 @@
                                 statusClass += "bg-yellow-100 text-yellow-850";
                             }
 
-                            // 💡 Rejection remark show karne ke liye logic yahan joda gaya hai
-                            let rejectionHtml = "";
+                            // Rejection remark ke liye naye column ka data
+                            let rejectionReasonText = "-";
                             if (rem.includes("REJECT") && rec.rejectionRemark && rec.rejectionRemark.trim() !== "") {
-                                rejectionHtml = `<div class="text-xs text-red-600 font-semibold mt-1">Karan: ${rec.rejectionRemark}</div>`;
+                                rejectionReasonText = `<span class="text-red-600 font-medium text-sm">${rec.rejectionRemark}</span>`;
                             }
 
                             tr.innerHTML = `
@@ -821,8 +822,8 @@
                                 <td class="border border-gray-200 px-4 py-3">${photoLinkHtml}</td>
                                 <td class="border border-gray-200 px-4 py-3">
                                     <span class="${statusClass}">${rec.remark}</span>
-                                    ${rejectionHtml}
                                 </td>
+                                <td class="border border-gray-200 px-4 py-3">${rejectionReasonText}</td>
                             `;
                             tbody.appendChild(tr);
                         });
