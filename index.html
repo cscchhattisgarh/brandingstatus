@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 min-h-screen py-10 px-4">
-    <div class="max-w-5xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 relative">
+    <div class="max-w-4xl mx-auto bg-white shadow-lg rounded-xl p-6 md:p-8 relative">
         
         <!-- Center Spinner Modal -->
         <div id="fullPageLoader" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
@@ -33,7 +33,7 @@
             </button>
         </div>
 
-        <!-- Download Branding Format Banner/Button -->
+        <!-- Download PDF Banner -->
         <div class="mb-6 bg-gradient-to-r from-indigo-50 to-blue-50 border border-indigo-200 rounded-xl p-4 flex flex-col sm:flex-row items-center justify-between shadow-sm">
             <div class="mb-3 sm:mb-0 text-center sm:text-left">
                 <h3 class="text-indigo-900 font-bold text-base">🎨 CSC Common Branding Format</h3>
@@ -52,10 +52,9 @@
             </p>
 
             <form id="brandingForm" onsubmit="submitNewEntry(event)" class="space-y-4">
-                
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
-                    <!-- 1. CSC ID -->
+                    <!-- CSC ID -->
                     <div class="md:col-span-2">
                         <label class="block text-gray-700 font-medium mb-1">CSC ID (12-digit) <span class="text-red-500">*</span></label>
                         <input type="text" id="newCscId" maxlength="12" inputmode="numeric" required placeholder="Enter 12-digit CSC ID" 
@@ -65,7 +64,7 @@
                         <span id="cscLookupMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 12 digits ki sankhya darj kare.</span>
                     </div>
 
-                    <!-- 2. District -->
+                    <!-- District -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">District <span class="text-red-500">*</span></label>
                         <select id="district" disabled required onchange="loadBlocks()" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
@@ -106,7 +105,7 @@
                         </select>
                     </div>
 
-                    <!-- 3. Block -->
+                    <!-- Block -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">Block <span class="text-red-500">*</span></label>
                         <select id="block" disabled required class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
@@ -114,13 +113,13 @@
                         </select>
                     </div>
 
-                    <!-- 4. VLE Name -->
+                    <!-- VLE Name -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">VLE Name <span class="text-red-500">*</span></label>
                         <input type="text" id="vleName" disabled required placeholder="Enter Full Name" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none">
                     </div>
 
-                    <!-- 5. Mobile No -->
+                    <!-- Mobile No -->
                     <div>
                         <label class="block text-gray-700 font-medium mb-1">Mobile No <span class="text-red-500">*</span></label>
                         <input type="text" id="mobileNo" disabled maxlength="10" inputmode="numeric" required placeholder="10-digit Mobile Number"
@@ -130,7 +129,7 @@
                         <span id="mobileMsg" class="text-xs font-medium block mt-1 text-gray-500">Kewal 10 digits ka mobile number darj kare.</span>
                     </div>
 
-                    <!-- 6. Photo Upload -->
+                    <!-- Photo Upload -->
                     <div class="md:col-span-2 bg-gray-50 p-4 rounded-lg border border-gray-200">
                         <label class="block text-gray-700 font-medium mb-1">जेनेरिक ब्रांडिंग फोटो (Browse & Upload) <span class="text-red-500">*</span></label>
                         <input type="file" id="photoFile" disabled accept="image/*" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed text-sm focus:outline-none">
@@ -138,22 +137,19 @@
                     </div>
                 </div>
 
-                <!-- 7. Address -->
+                <!-- Address -->
                 <div>
                     <label class="block text-gray-700 font-medium mb-1">पूरा पता लैंड Marks के साथ (Full Address & Landmark) <span class="text-red-500">*</span></label>
                     <textarea id="address" rows="2" disabled required placeholder="Center ka pura pata aur landmark likhe, Jaha ka Verification Karna hai" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none"></textarea>
                 </div>
 
-                <!-- 8 & 9. Lat & Long -->
+                <!-- Lat & Long -->
                 <div>
                     <label class="block text-gray-700 font-medium mb-1">Google Map Location (Latitude & Longitude) <span class="text-red-500">*</span></label>
                     <div class="flex gap-2">
                         <input type="text" id="latLong" disabled required placeholder="e.g. 21.2514, 81.6296" class="w-full border border-gray-300 rounded-lg px-4 py-2 bg-gray-100 cursor-not-allowed focus:outline-none font-mono text-sm">
                         <button type="button" id="locBtn" disabled onclick="getLocation()" class="bg-gray-200 text-gray-400 font-semibold px-4 py-2 rounded-lg cursor-not-allowed transition whitespace-nowrap shadow-sm">📍 Current Location</button>
                     </div>
-                    <p class="text-xs text-gray-500 mt-1.5">
-                        💡 <b>Tip:</b> Aap ya to manual Latitude & Longitude is format me type kare: <code class="bg-gray-100 px-1 py-0.5 rounded text-indigo-600 font-mono">21.2514, 81.6296</code>, ya fir apna current location capture karne ke liye <b>'Current Location'</b> button par click kare.
-                    </p>
                 </div>
 
                 <!-- Submit Button -->
@@ -170,7 +166,7 @@
         <!-- ================= STATUS POPUP MODAL ================= -->
         <div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
             <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
-                <div id="popupIcon" class="text-5xl">ℹ</div>
+                <div id="popupIcon" class="text-5xl">ℹ️️</div>
                 <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
                 <p id="popupMessage" class="text-gray-600 text-sm"></p>
                 
@@ -231,9 +227,15 @@
                     <h3 class="text-lg font-semibold text-gray-800 mb-3 border-b pb-2">Branding Records</h3>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse border border-gray-200 rounded-lg">
-                            <!-- Dynamic Headers from Google Sheet -->
                             <thead class="bg-gray-50 text-gray-800">
-                                <tr id="recordsTableHead"></tr>
+                                <tr>
+                                    <th class="border border-gray-200 px-4 py-3">S.No.</th>
+                                    <th class="border border-gray-200 px-4 py-3">Date & Time</th>
+                                    <th class="border border-gray-200 px-4 py-3">Block</th>
+                                    <th class="border border-gray-200 px-4 py-3">Map Location</th>
+                                    <th class="border border-gray-200 px-4 py-3">Photo Link</th>
+                                    <th class="border border-gray-200 px-4 py-3">Status</th>
+                                </tr>
                             </thead>
                             <tbody id="recordsTableBody"></tbody>
                         </table>
@@ -383,7 +385,7 @@
             const val = input.value;
 
             if (val.length > 0 && val.length < 10) {
-                msg.innerText = "⚠ Mobile number 10 digits ka hona chahiye (" + val.length + "/10)";
+                msg.innerText = "⚠️ Mobile number 10 digits ka hona chahiye (" + val.length + "/10)";
                 msg.className = "text-xs font-medium block mt-1 text-orange-600";
             } else if (val.length === 10) {
                 msg.innerText = "✓ Mobile number valid hai (10/10).";
@@ -623,7 +625,7 @@
 
             const cscId = document.getElementById('newCscId').value.trim();
             if (cscId.length !== 12 || cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
-                alert("CSC ID ka format aamya (invalid) hai. 9th-10th digits '00' aur 11th digit '1' hona chahiye.");
+                alert("CSC ID ka format aamya (invalid) hai.");
                 return;
             }
 
@@ -635,7 +637,6 @@
             }
 
             const latLongVal = document.getElementById('latLong').value.trim();
-
             if (latLongVal.includes("fetch") || latLongVal === "" || !latLongVal.includes(',')) {
                 alert("Kripya pehle valid GPS Location fetch karein ya sahi format me daalein (e.g., 21.2514, 81.6296).");
                 submitBtn.disabled = false;
@@ -755,7 +756,7 @@
 
             if (cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
                 message.className = "text-center font-medium my-4 text-red-600";
-                message.innerText = "❌ CSC ID format galat hai: 9th-10th '00' aur 11th '1' hona chahiye.";
+                message.innerText = "❌ CSC ID format galat hai.";
                 resultContainer.classList.add('hidden');
                 return;
             }
@@ -775,62 +776,35 @@
                     document.getElementById('resVleName').innerText = res.profile.vleName || "";
                     document.getElementById('resMobile').innerText = res.profile.mobileNo || "";
 
-                    const theadTr = document.getElementById('recordsTableHead');
-                    theadTr.innerHTML = "";
                     const tbody = document.getElementById('recordsTableBody');
                     tbody.innerHTML = "";
 
-                    // Dynamic Table Headers from Google Sheet (res.headers)
-                    if (res.headers && res.headers.length > 0) {
-                        res.headers.forEach(headerText => {
-                            const th = document.createElement('th');
-                            th.className = "border border-gray-200 px-4 py-3";
-                            th.innerText = headerText;
-                            theadTr.appendChild(th);
-                        });
-                    }
-
-                    // Dynamic Table Rows based on sheet headers
                     if (res.records && res.records.length > 0) {
                         res.records.forEach((rec, index) => {
                             const tr = document.createElement('tr');
                             tr.className = index % 2 === 0 ? "bg-white" : "bg-gray-50";
                             
-                            res.headers.forEach(headerText => {
-                                const td = document.createElement('td');
-                                td.className = "border border-gray-200 px-4 py-3 text-sm";
-                                
-                                let cellVal = rec[headerText] !== undefined ? rec[headerText] : "-";
-                                const lowerHeader = headerText.toLowerCase();
+                            let mapLinkHtml = rec.latLong ? `<a href="https://maps.google.com/?q=${rec.lat},${rec.lon}" target="_blank" class="text-blue-600 underline font-medium">📍 View Map</a>` : "-";
+                            let photoLinkHtml = rec.photoLink ? `<a href="${rec.photoLink}" target="_blank" class="text-indigo-600 underline font-medium">📷 View Photo</a>` : "-";
+                            
+                            let statusClass = "px-2 py-1 rounded text-xs font-bold ";
+                            const rem = (rec.remark || "").toUpperCase();
+                            if (rem.includes("APPROV")) {
+                                statusClass += "bg-green-100 text-green-800";
+                            } else if (rem.includes("REJECT")) {
+                                statusClass += "bg-red-100 text-red-800";
+                            } else {
+                                statusClass += "bg-yellow-100 text-yellow-850";
+                            }
 
-                                if (lowerHeader.includes('map') && rec.lat && rec.lon) {
-                                    td.innerHTML = `<a href="https://maps.google.com/?q=${rec.lat},${rec.lon}" target="_blank" class="text-blue-600 underline font-medium">📍 View Map</a>`;
-                                } else if (lowerHeader.includes('photo') && rec.photoLink) {
-                                    td.innerHTML = `<a href="${rec.photoLink}" target="_blank" class="text-indigo-600 underline font-medium">📷 View Photo</a>`;
-                                } else if (lowerHeader.includes('status')) {
-                                    let statusClass = "px-2 py-1 rounded text-xs font-bold ";
-                                    const rem = (cellVal || "").toUpperCase();
-                                    if (rem.includes("APPROV")) {
-                                        statusClass += "bg-green-100 text-green-800";
-                                    } else if (rem.includes("REJECT")) {
-                                        statusClass += "bg-red-100 text-red-800";
-                                    } else {
-                                        statusClass += "bg-yellow-100 text-yellow-850";
-                                    }
-                                    td.innerHTML = `<span class="${statusClass}">${cellVal}</span>`;
-                                } else if (lowerHeader.includes('reason') || lowerHeader.includes('remark')) {
-                                    if (cellVal && cellVal !== "-" && cellVal.trim() !== "") {
-                                        td.innerHTML = `<span class="text-red-600 font-medium text-sm">${cellVal}</span>`;
-                                    } else {
-                                        td.innerText = "-";
-                                    }
-                                } else {
-                                    td.innerText = cellVal;
-                                }
-
-                                tr.appendChild(td);
-                            });
-
+                            tr.innerHTML = `
+                                <td class="border border-gray-200 px-4 py-3">${index + 1}</td>
+                                <td class="border border-gray-200 px-4 py-3 text-sm">${rec.date}</td>
+                                <td class="border border-gray-200 px-4 py-3">${rec.block}</td>
+                                <td class="border border-gray-200 px-4 py-3">${mapLinkHtml}</td>
+                                <td class="border border-gray-200 px-4 py-3">${photoLinkHtml}</td>
+                                <td class="border border-gray-200 px-4 py-3"><span class="${statusClass}">${rec.remark}</span></td>
+                            `;
                             tbody.appendChild(tr);
                         });
                     }
