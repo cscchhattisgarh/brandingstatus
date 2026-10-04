@@ -163,16 +163,23 @@
             <div id="formMessage" class="text-center font-medium mt-3"></div>
         </div>
 
-        <!-- ================= STATUS POPUP MODAL ================= -->
-        <div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
-            <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
-                <div id="popupIcon" class="text-5xl">ℹ️️</div>
-                <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
-                <p id="popupMessage" class="text-gray-600 text-sm"></p>
-                
-                <div id="popupButtons" class="flex justify-center gap-3 pt-2"></div>
-            </div>
+       <!-- ================= STATUS POPUP MODAL ================= -->
+<div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
+    <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
+        <div id="popupIcon" class="text-5xl">ℹ</div>
+        <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
+        <p id="popupMessage" class="text-gray-600 text-sm"></p>
+        
+        <div class="flex justify-center gap-3 pt-2">
+            <button id="popupStatusBtn" onclick="executePopupStatusCheck()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm">
+                🔍 Status Check Kare
+            </button>
+            <button onclick="closePopup()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition text-sm">
+                Theek Hai (OK)
+            </button>
         </div>
+    </div>
+</div>
 
         <!-- ================= SECTION 2: STATUS CHECK PORTAL ================= -->
         <div id="sectionStatusCheck" class="hidden space-y-6">
@@ -449,51 +456,51 @@
             }
         }
 
-        function showPopup(title, message, iconType = 'info', showStatusBtn = false, cscId = "") {
-            const popup = document.getElementById('statusPopup');
-            const titleEl = document.getElementById('popupTitle');
-            const msgEl = document.getElementById('popupMessage');
-            const iconEl = document.getElementById('popupIcon');
-            const btnContainer = document.getElementById('popupButtons');
+        let globalPopupCscId = ""; // CSC ID ko store karne ke liye
 
-            titleEl.innerText = title;
-            msgEl.innerText = message;
-            
-            if (iconType === 'approved') {
-                iconEl.innerText = "✅";
-            } else if (iconType === 'pending') {
-                iconEl.innerText = "⏳";
-            } else if (iconType === 'rejected') {
-                iconEl.innerText = "❌";
-            } else {
-                iconEl.innerText = "ℹ️";
-            }
+function showPopup(title, message, iconType = 'info', showStatusBtn = false, cscId = "") {
+    const popup = document.getElementById('statusPopup');
+    const titleEl = document.getElementById('popupTitle');
+    const msgEl = document.getElementById('popupMessage');
+    const iconEl = document.getElementById('popupIcon');
+    const statusBtn = document.getElementById('popupStatusBtn');
 
-            btnContainer.innerHTML = "";
+    titleEl.innerText = title;
+    msgEl.innerText = message;
+    globalPopupCscId = cscId;
+    
+    if (iconType === 'approved') {
+        iconEl.innerText = "✅";
+    } else if (iconType === 'pending') {
+        iconEl.innerText = "⏳";
+    } else if (iconType === 'rejected') {
+        iconEl.innerText = "❌";
+    } else {
+        iconEl.innerText = "ℹ️";
+    }
 
-            if (showStatusBtn) {
-                const statusBtn = document.createElement('button');
-                statusBtn.className = "bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-2 rounded-lg transition text-sm";
-                statusBtn.innerText = "🔍 Status Check Kare";
-                statusBtn.onclick = function() {
-                    closePopup();
-                    switchTab('statusCheck');
-                    document.getElementById('cscIdInput').value = cscId;
-                    validateStatusCscId(document.getElementById('cscIdInput'));
-                    searchData();
-                };
-                btnContainer.appendChild(statusBtn);
-            }
+    // Button show ya hide karein
+    if (showStatusBtn) {
+        statusBtn.classList.remove('hidden');
+    } else {
+        statusBtn.classList.add('hidden');
+    }
 
-            const okBtn = document.createElement('button');
-            okBtn.className = "bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold px-4 py-2 rounded-lg transition text-sm";
-            okBtn.innerText = "Theek Hai (OK)";
-            okBtn.onclick = closePopup;
-            btnContainer.appendChild(okBtn);
+    popup.classList.remove('hidden');
+}
 
-            popup.classList.remove('hidden');
-        }
+function executePopupStatusCheck() {
+    closePopup();
+    switchTab('statusCheck');
+    const cscInput = document.getElementById('cscIdInput');
+    cscInput.value = globalPopupCscId;
+    validateStatusCscId(cscInput);
+    searchData();
+}
 
+function closePopup() {
+    document.getElementById('statusPopup').classList.add('hidden');
+}
         function closePopup() {
             document.getElementById('statusPopup').classList.add('hidden');
         }
