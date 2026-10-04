@@ -170,7 +170,7 @@
         <!-- ================= STATUS POPUP MODAL ================= -->
         <div id="statusPopup" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4">
             <div class="bg-white rounded-xl max-w-md w-full p-6 text-center shadow-2xl space-y-4">
-                <div id="popupIcon" class="text-5xl">ℹ️</div>
+                <div id="popupIcon" class="text-5xl">ℹ️️</div>
                 <h3 id="popupTitle" class="text-xl font-bold text-gray-800">CSC ID Status</h3>
                 <p id="popupMessage" class="text-gray-600 text-sm"></p>
                 
@@ -807,13 +807,22 @@
                                 statusClass += "bg-yellow-100 text-yellow-850";
                             }
 
+                            // 💡 Rejection remark show karne ke liye logic yahan joda gaya hai
+                            let rejectionHtml = "";
+                            if (rem.includes("REJECT") && rec.rejectionRemark && rec.rejectionRemark.trim() !== "") {
+                                rejectionHtml = `<div class="text-xs text-red-600 font-semibold mt-1">Karan: ${rec.rejectionRemark}</div>`;
+                            }
+
                             tr.innerHTML = `
                                 <td class="border border-gray-200 px-4 py-3">${index + 1}</td>
                                 <td class="border border-gray-200 px-4 py-3 text-sm">${rec.date}</td>
                                 <td class="border border-gray-200 px-4 py-3">${rec.block}</td>
                                 <td class="border border-gray-200 px-4 py-3">${mapLinkHtml}</td>
                                 <td class="border border-gray-200 px-4 py-3">${photoLinkHtml}</td>
-                                <td class="border border-gray-200 px-4 py-3"><span class="${statusClass}">${rec.remark}</span></td>
+                                <td class="border border-gray-200 px-4 py-3">
+                                    <span class="${statusClass}">${rec.remark}</span>
+                                    ${rejectionHtml}
+                                </td>
                             `;
                             tbody.appendChild(tr);
                         });
