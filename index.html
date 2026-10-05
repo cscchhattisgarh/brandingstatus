@@ -623,84 +623,82 @@
         }
 
         function submitNewEntry(e) {
-            e.preventDefault();
-            const submitBtn = document.getElementById('submitBtn');
-            const formMsg = document.getElementById('formMessage');
-            const fileInput = document.getElementById('photoFile');
+    e.preventDefault();
+    const submitBtn = document.getElementById('submitBtn');
+    const formMsg = document.getElementById('formMessage');
+    const fileInput = document.getElementById('photoFile');
 
-            const cscId = document.getElementById('newCscId').value.trim();
-            if (cscId.length !== 12 || cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
-                alert("CSC ID ka format invalid hai.");
-                return;
-            }
+    const cscId = document.getElementById('newCscId').value.trim();
+    if (cscId.length !== 12 || cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
+        alert("CSC ID ka format invalid hai.");
+        return;
+    }
 
-            const mobileNoVal = document.getElementById('mobileNo').value.trim();
-            if (mobileNoVal.length !== 10) {
-                alert("Mobile number theek 10 digits ka hona anivarya hai.");
-                document.getElementById('mobileNo').focus();
-                return;
-            }
+    const mobileNoVal = document.getElementById('mobileNo').value.trim();
+    if (mobileNoVal.length !== 10) {
+        alert("Mobile number theek 10 digits ka hona anivarya hai.");
+        document.getElementById('mobileNo').focus();
+        return;
+    }
 
-            const latLongVal = document.getElementById('latLong').value.trim();
-            if (latLongVal.includes("fetch") || latLongVal === "" || !latLongVal.includes(',')) {
-                alert("Kripya pehle valid GPS Location fetch kare ya sahi format me daale (e.g., 21.2514, 81.6296).");
-                submitBtn.disabled = false;
-                submitBtn.innerText = "Submit";
-                return;
-            }
+    const latLongVal = document.getElementById('latLong').value.trim();
+    if (latLongVal.includes("fetch") || latLongVal === "" || !latLongVal.includes(',')) {
+        alert("Kripya pehle valid GPS Location fetch kare ya sahi format me daale (e.g., 21.2514, 81.6296).");
+        return;
+    }
 
-            const latLonParts = latLongVal.split(',');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Submitting...";
-            formMsg.innerText = "";
+    // 🛑 Address Validation Check
+    const address = document.getElementById('address').value.trim();
+    if (!address) {
+        alert("Kripya poora pata (Full Address & Landmark) darj karein.");
+        document.getElementById('address').focus();
+        return;
+    }
 
-            const loader = document.getElementById('fullPageLoader');
-            const loaderText = document.getElementById('loaderText');
-            loaderText.innerText = "Saving your data, please wait...";
-            loader.classList.remove('hidden');
+    // 🛑 Photo Validation Check
+    if (fileInput.files.length === 0) {
+        alert("Kripya branding photo upload karein.");
+        fileInput.focus();
+        return;
+    }
 
-            const district = document.getElementById('district').value;
-            const block = document.getElementById('block').value;
-            const vleName = document.getElementById('vleName').value.trim();
-            const address = document.getElementById('address').value.trim();
-            const lat = latLonParts[0] ? latLonParts[0].trim() : "";
-            const lon = latLonParts[1] ? latLonParts[1].trim() : "";
+    const latLonParts = latLongVal.split(',');
+    submitBtn.disabled = true;
+    submitBtn.innerText = "Submitting...";
+    formMsg.innerText = "";
 
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    const base64String = event.target.result.split(',')[1];
-                    sendJsonToBackend({
-                        action: 'submit',
-                        cscId: cscId,
-                        district: district,
-                        block: block,
-                        vleName: vleName,
-                        mobileNo: mobileNoVal,
-                        address: address,
-                        lat: lat,
-                        lon: lon,
-                        fileData: base64String,
-                        mimeType: file.type,
-                        fileName: file.name
-                    });
-                };
-                reader.readAsDataURL(file);
-            } else {
-                sendJsonToBackend({
-                    action: 'submit',
-                    cscId: cscId,
-                    district: district,
-                    block: block,
-                    vleName: vleName,
-                    mobileNo: mobileNoVal,
-                    address: address,
-                    lat: lat,
-                    lon: lon
-                });
-            }
-        }
+    const loader = document.getElementById('fullPageLoader');
+    const loaderText = document.getElementById('loaderText');
+    loaderText.innerText = "Saving your data, please wait...";
+    loader.classList.remove('hidden');
+
+    const district = document.getElementById('district').value;
+    const block = document.getElementById('block').value;
+    const vleName = document.getElementById('vleName').value.trim();
+    const lat = latLonParts[0] ? latLonParts[0].trim() : "";
+    const lon = latLonParts[1] ? latLonParts[1].trim() : "";
+
+    const file = fileInput.files[0];
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const base64String = event.target.result.split(',')[1];
+        sendJsonToBackend({
+            action: 'submit',
+            cscId: cscId,
+            district: district,
+            block: block,
+            vleName: vleName,
+            mobileNo: mobileNoVal,
+            address: address,
+            lat: lat,
+            lon: lon,
+            fileData: base64String,
+            mimeType: file.type,
+            fileName: file.name
+        });
+    };
+    reader.readAsDataURL(file);
+}
 
         function sendJsonToBackend(payload) {
             const submitBtn = document.getElementById('submitBtn');
