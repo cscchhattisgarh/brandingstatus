@@ -630,7 +630,7 @@
 
             const cscId = document.getElementById('newCscId').value.trim();
             if (cscId.length !== 12 || cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
-                alert("CSC ID ka format aamya (invalid) hai.");
+                alert("CSC ID ka format invalid hai.");
                 return;
             }
 
@@ -643,14 +643,31 @@
 
             const latLongVal = document.getElementById('latLong').value.trim();
             if (latLongVal.includes("fetch") || latLongVal === "" || !latLongVal.includes(',')) {
-                alert("Kripya pehle valid GPS Location fetch karein ya sahi format me daalein (e.g., 21.2514, 81.6296).");
+                alert("Kripya pehle valid GPS Location fetch kare ya sahi format me daale (e.g., 21.2514, 81.6296).");
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Submit";
                 return;
             }
+// 🛑 Address Validation Check
+    const address = document.getElementById('address').value.trim();
+    if (!address) {
+        alert("Kripya poora pata (Full Address & Landmark) darj karein.");
+        document.getElementById('address').focus();
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit";
+        return;
+    }
+
+    // 🛑 Photo Validation Check (Agar photo anivarya hai)
+    if (fileInput.files.length === 0) {
+        alert("Kripya branding photo upload karein.");
+        fileInput.focus();
+        submitBtn.disabled = false;
+        submitBtn.innerText = "Submit";
+        return;
+    }
 
             const latLonParts = latLongVal.split(',');
-
             submitBtn.disabled = true;
             submitBtn.innerText = "Submitting...";
             formMsg.innerText = "";
