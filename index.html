@@ -648,24 +648,6 @@
                 submitBtn.innerText = "Submit";
                 return;
             }
-// 🛑 Address Validation Check
-    const address = document.getElementById('address').value.trim();
-    if (!address) {
-        alert("Kripya poora pata (Full Address & Landmark) darj karein.");
-        document.getElementById('address').focus();
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Submit";
-        return;
-    }
-
-    // 🛑 Photo Validation Check (Agar photo anivarya hai)
-    if (fileInput.files.length === 0) {
-        alert("Kripya branding photo upload karein.");
-        fileInput.focus();
-        submitBtn.disabled = false;
-        submitBtn.innerText = "Submit";
-        return;
-    }
 
             const latLonParts = latLongVal.split(',');
             submitBtn.disabled = true;
