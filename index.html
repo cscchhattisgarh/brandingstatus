@@ -552,7 +552,7 @@
             document.getElementById('photoFile').value = "";
             document.getElementById('existingPhotoContainer').innerHTML = "";
             
-            let msg = masterRes.message || "Aapki ID abhi active hai, aur aapko abhi photo upload karne ki zaroorat nahi hai.";
+            let msg = masterRes.message || "Aapki ID Ya to Galat hai ya Abhi ACTIVE hai, Isliye aapko abhi photo upload karne ki zaroorat nahi hai.";
             showPopup("Notice", msg, "info", false);
             warningBox.classList.remove('hidden');
             warningBox.innerText = "🛑 " + msg;
@@ -677,7 +677,7 @@
             document.getElementById('photoFile').value = "";
             document.getElementById('existingPhotoContainer').innerHTML = "";
 
-            showPopup("Fresh CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nahi ki hai. Isliye Aap Photo Upload Kar sakte hai.", "approved", false, cscId);
+            showPopup("Blocked CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nahi ki hai. Isliye Aap Photo Upload Kar sakte hai.", "approved", false, cscId);
             warningBox.classList.add('hidden');
         }
     } catch (err) {
