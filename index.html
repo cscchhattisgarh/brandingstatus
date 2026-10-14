@@ -519,108 +519,173 @@
             }
         }
 
-        async function checkExistingCscId(cscId) {
-            if (!cscId || cscId.length !== 12) return;
+       async function checkExistingCscId(cscId) {
+    if (!cscId || cscId.length !== 12) return;
 
-            if (cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
-                return;
-            }
+    if (cscId.substring(8, 10) !== "00" || cscId.charAt(10) !== "1") {
+        return;
+    }
+    
+    const loader = document.getElementById('fullPageLoader');
+    const loaderText = document.getElementById('loaderText');
+    const warningBox = document.getElementById('validationWarning');
+    
+    loaderText.innerText = "CSC ID check ki ja rahi hai...";
+    loader.classList.remove('hidden');
+
+    try {
+        // Step 1: Sabse pehle Master sheet mein check karo
+        const masterResp = await fetch(`${WEB_APP_URL}?action=checkMaster&cscid=${encodeURIComponent(cscId)}`);
+        const masterRes = await masterResp.json();
+
+        if (!masterRes.success || !masterRes.found || masterRes.statusType === "NOT_FOUND" || masterRes.statusType === "LOW_PRIORITY") {
+            loader.classList.add('hidden');
+            // Form ko puri tarah disable aur clean/reset kar do
+            setFormEnabled(false);
+            document.getElementById('newCscId').value = "";
+            document.getElementById('district').value = "";
+            document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Kare</option>';
+            document.getElementById('vleName').value = "";
+            document.getElementById('mobileNo').value = "";
+            document.getElementById('address').value = "";
+            document.getElementById('latLong').value = "";
+            document.getElementById('photoFile').value = "";
+            document.getElementById('existingPhotoContainer').innerHTML = "";
             
-            const loader = document.getElementById('fullPageLoader');
-            const loaderText = document.getElementById('loaderText');
-            const warningBox = document.getElementById('validationWarning');
-            
-            loaderText.innerText = "CSC ID check ki ja rahi hai...";
-            loader.classList.remove('hidden');
-
-            try {
-                const response = await fetch(`${WEB_APP_URL}?action=check&cscid=${encodeURIComponent(cscId)}`);
-                const res = await response.json();
-                loader.classList.add('hidden');
-
-                if (res.exists) {
-                    const remarkL = (res.remarkL || "").toUpperCase();
-
-                    if (remarkL.includes("REJECT")) {
-                        setFormEnabled(true);
-                        
-                        const districtSelect = document.getElementById('district');
-                        let matchedDistrict = "";
-                        for (let opt of districtSelect.options) {
-                            if (opt.value.toLowerCase() === (res.district || "").toLowerCase()) {
-                                matchedDistrict = opt.value;
-                                break;
-                            }
-                        }
-                        districtSelect.value = matchedDistrict;
-                        
-                        loadBlocks();
-
-                        const blockSelect = document.getElementById('block');
-                        let matchedBlock = "";
-                        for (let opt of blockSelect.options) {
-                            if (opt.value.toLowerCase() === (res.block || "").toLowerCase()) {
-                                matchedBlock = opt.value;
-                                break;
-                            }
-                        }
-                        blockSelect.value = matchedBlock;
-
-                        document.getElementById('vleName').value = res.vleName || "";
-                        document.getElementById('mobileNo').value = res.mobileNo || "";
-                        document.getElementById('address').value = res.address || "";
-                        if(res.lat && res.lon) {
-                            document.getElementById('latLong').value = `${res.lat}, ${res.lon}`;
-                        }
-
-                        const photoContainer = document.getElementById('existingPhotoContainer');
-                        if (res.photoLink) {
-                            photoContainer.innerHTML = `Pichhli Rejected Photo: <a href="${res.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>`;
-                        } else {
-                            photoContainer.innerHTML = "";
-                        }
-
-                        // Yahan true rakha hai taaki button hamesha dikhe jab record sheet mein ho
-                        showPopup("Status: Rejected", "Aapka pichhla Photo Rejected hai. Aap nayi photo aur details daal kar form resubmit kar sakte hain.", "rejected", true, cscId);
-                        warningBox.classList.add('hidden');
-                    } else {
-                        setFormEnabled(false);
-                        document.getElementById('district').value = "";
-                        document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Kare</option>';
-                        document.getElementById('vleName').value = "";
-                        document.getElementById('mobileNo').value = "";
-                        document.getElementById('address').value = "";
-                        document.getElementById('latLong').value = "";
-                        document.getElementById('photoFile').value = "";
-                        document.getElementById('existingPhotoContainer').innerHTML = "";
-                        
-                        let iconType = remarkL.includes("APPROV") ? "approved" : "pending";
-                        showPopup("Form Already Filled", "Aapne pehle se Photo Upload Kar liya hai. Iska status '" + res.remarkL + "' hai.", iconType, true, cscId);
-                        
-                        warningBox.classList.remove('hidden');
-                        warningBox.innerText = "🛑 Entry Blocked: Aapka Photo pehle se Uploaded hai aur status '" + res.remarkL + "' hai.";
-                    }
-                } else {
-                    setFormEnabled(true);
-                    document.getElementById('district').value = "";
-                    document.getElementById('block').innerHTML = '<option value="">Pehle District Select Kare</option>';
-                    document.getElementById('vleName').value = "";
-                    document.getElementById('mobileNo').value = "";
-                    document.getElementById('address').value = "";
-                    document.getElementById('latLong').value = "";
-                    document.getElementById('photoFile').value = "";
-                    document.getElementById('existingPhotoContainer').innerHTML = "";
-
-                    // Database mein nahi hai isliye false (button nahi aayega)
-                    showPopup("Fresh CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nahi ki hai. Isliye Aap Photo Upload Kar sakte hai.", "approved", false, cscId);
-                    warningBox.classList.add('hidden');
-                }
-            } catch (err) {
-                loader.classList.add('hidden');
-                console.error(err);
-                showPopup("Error", "CSC ID check karne me samasya aayi.", "info", false);
-            }
+            let msg = masterRes.message || "Aapki ID abhi active hai, aur aapko abhi photo upload karne ki zaroorat nahi hai.";
+            showPopup("Notice", msg, "info", false);
+            warningBox.classList.remove('hidden');
+            warningBox.innerText = "🛑 " + msg;
+            return;
         }
+
+        // Agar Column G mein "PV DONE" hai
+        if (masterRes.statusType === "PV_DONE") {
+            loader.classList.add('hidden');
+            setFormEnabled(false);
+            document.getElementById('newCscId').value = "";
+            document.getElementById('district').value = "";
+            document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Kare</option>';
+            document.getElementById('vleName').value = "";
+            document.getElementById('mobileNo').value = "";
+            document.getElementById('address').value = "";
+            document.getElementById('latLong').value = "";
+            document.getElementById('photoFile').value = "";
+            document.getElementById('existingPhotoContainer').innerHTML = "";
+            
+            showPopup("PV Done", masterRes.message, "approved", false);
+            warningBox.classList.remove('hidden');
+            warningBox.innerText = "🛑 " + masterRes.message;
+            return;
+        }
+
+        // Step 2: Agar Master mein valid mil gayi, tab Form_Responses sheet mein check karo ki pehle se upload hua hai ya nahi
+        const response = await fetch(`${WEB_APP_URL}?action=check&cscid=${encodeURIComponent(cscId)}`);
+        const res = await response.json();
+        loader.classList.add('hidden');
+
+        if (res.exists) {
+            const remarkL = (res.remarkL || "").toUpperCase();
+
+            if (remarkL.includes("REJECT")) {
+                setFormEnabled(true);
+                
+                const districtSelect = document.getElementById('district');
+                let matchedDistrict = "";
+                for (let opt of districtSelect.options) {
+                    if (opt.value.toLowerCase() === (res.district || "").toLowerCase()) {
+                        matchedDistrict = opt.value;
+                        break;
+                    }
+                }
+                districtSelect.value = matchedDistrict;
+                loadBlocks();
+
+                const blockSelect = document.getElementById('block');
+                let matchedBlock = "";
+                for (let opt of blockSelect.options) {
+                    if (opt.value.toLowerCase() === (res.block || "").toLowerCase()) {
+                        matchedBlock = opt.value;
+                        break;
+                    }
+                }
+                blockSelect.value = matchedBlock;
+
+                document.getElementById('vleName').value = res.vleName || "";
+                document.getElementById('mobileNo').value = res.mobileNo || "";
+                document.getElementById('address').value = res.address || "";
+                if(res.lat && res.lon) {
+                    document.getElementById('latLong').value = `${res.lat}, ${res.lon}`;
+                }
+
+                const photoContainer = document.getElementById('existingPhotoContainer');
+                if (res.photoLink) {
+                    photoContainer.innerHTML = `Pichhli Rejected Photo: <a href="${res.photoLink}" target="_blank" class="text-blue-600 underline font-semibold">View Photo</a>`;
+                } else {
+                    photoContainer.innerHTML = "";
+                }
+
+                showPopup("Status: Rejected", "Aapka pichhla Photo Rejected hai. Aap nayi photo aur details daal kar form resubmit kar sakte hain.", "rejected", true, cscId);
+                warningBox.classList.add('hidden');
+            } else {
+                setFormEnabled(false);
+                document.getElementById('district').value = "";
+                document.getElementById('block').innerHTML = '<option value="">Pehle CSC ID Darj Kare</option>';
+                document.getElementById('vleName').value = "";
+                document.getElementById('mobileNo').value = "";
+                document.getElementById('address').value = "";
+                document.getElementById('latLong').value = "";
+                document.getElementById('photoFile').value = "";
+                document.getElementById('existingPhotoContainer').innerHTML = "";
+                
+                let iconType = remarkL.includes("APPROV") ? "approved" : "pending";
+                showPopup("Form Already Filled", "Aapne pehle se Photo Upload Kar liya hai. Iska status '" + res.remarkL + "' hai.", iconType, true, cscId);
+                
+                warningBox.classList.remove('hidden');
+                warningBox.innerText = "🛑 Entry Blocked: Aapka Photo pehle se Uploaded hai aur status '" + res.remarkL + "' hai.";
+            }
+        } else {
+            // Step 3: Master mein bhi hai aur Form_Responses mein bhi nahi hai (Fresh Valid ID)
+            setFormEnabled(true);
+            
+            // Master se mile details auto-fill kar sakte hain agar chahen, ya blank rakh sakte hain
+            const districtSelect = document.getElementById('district');
+            let matchedDistrict = "";
+            for (let opt of districtSelect.options) {
+                if (opt.value.toLowerCase() === (masterRes.district || "").toLowerCase()) {
+                    matchedDistrict = opt.value;
+                    break;
+                }
+            }
+            districtSelect.value = matchedDistrict;
+            loadBlocks();
+
+            const blockSelect = document.getElementById('block');
+            let matchedBlock = "";
+            for (let opt of blockSelect.options) {
+                if (opt.value.toLowerCase() === (masterRes.block || "").toLowerCase()) {
+                    matchedBlock = opt.value;
+                    break;
+                }
+            }
+            blockSelect.value = matchedBlock;
+
+            document.getElementById('vleName').value = masterRes.vleName || "";
+            document.getElementById('mobileNo').value = masterRes.mobileNo || "";
+            document.getElementById('address').value = "";
+            document.getElementById('latLong').value = "";
+            document.getElementById('photoFile').value = "";
+            document.getElementById('existingPhotoContainer').innerHTML = "";
+
+            showPopup("Fresh CSC ID", "Aapne Abhi tak Branding ki koi bhi Photo Upload Nahi ki hai. Isliye Aap Photo Upload Kar sakte hai.", "approved", false, cscId);
+            warningBox.classList.add('hidden');
+        }
+    } catch (err) {
+        loader.classList.add('hidden');
+        console.error(err);
+        showPopup("Error", "CSC ID check karne me samasya aayi.", "info", false);
+    }
+}
 
         function submitNewEntry(e) {
     e.preventDefault();
