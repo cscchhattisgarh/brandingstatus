@@ -114,6 +114,17 @@
       padding: 25px;
     }
     .gps-status { font-size: 0.85rem; font-weight: 600; margin-top: 6px; }
+
+    .portal-tabs { display: flex; gap: 10px; margin: 0 0 22px; padding: 6px; background: #eef3f8; border-radius: 12px; }
+    .portal-tab { flex: 1; border: 0; border-radius: 9px; padding: 11px 12px; color: #475569; background: transparent; font-size: 0.9rem; font-weight: 600; transition: all 0.2s ease; }
+    .portal-tab.active { color: #fff; background: linear-gradient(90deg, #003366 0%, #0055a5 100%); box-shadow: 0 4px 12px rgba(0,51,102,0.18); }
+    .approval-card { max-width: 560px; margin: 0 auto; padding: 24px; background: #f8fbff; border: 1px solid #dbeafe; border-radius: 14px; }
+    .approval-hint { color: #64748b; font-size: 0.88rem; }
+    .approval-result { display: none; margin-top: 18px; padding: 16px; border-radius: 10px; text-align: center; font-weight: 700; }
+    .approval-result.approved { display: block; color: #166534; background: #dcfce7; border: 1px solid #86efac; }
+    .approval-result.pending { display: block; color: #92400e; background: #fef3c7; border: 1px solid #fcd34d; }
+    .approval-result.neutral { display: block; color: #334155; background: #f1f5f9; border: 1px solid #cbd5e1; }
+    @media (max-width: 520px) { .form-container { padding: 22px 16px; } .portal-tab { font-size: 0.78rem; padding: 10px 6px; } }
   </style>
 </head>
 <body>
@@ -125,6 +136,13 @@
     <h5 class="header-title">CSC & Sewa Setu</h5>
     <div class="sub-title">Common Branding Upload Portal</div>
   </div>
+
+  <div class="portal-tabs" role="tablist" aria-label="Branding portal sections">
+    <button type="button" class="portal-tab active" id="uploadTabButton" role="tab" aria-selected="true" onclick="switchPortalTab('upload')">Upload Branding Details</button>
+    <button type="button" class="portal-tab" id="approvalTabButton" role="tab" aria-selected="false" onclick="switchPortalTab('approval')">Check Approval Status</button>
+  </div>
+
+  <section id="uploadPanel" class="tab-panel">
  
   <div class="download-box">
     <div style="font-size: 0.92rem; color: #003366; font-weight: 600;" class="mb-2">
@@ -238,6 +256,30 @@
   </form>
 
   <div id="responseMsg" class="mt-3 text-center fw-bold"></div>
+  </section>
+
+  <section id="approvalPanel" class="tab-panel" style="display:none" role="tabpanel" aria-labelledby="approvalTabButton">
+    <div class="section-title">Branding Approval Status</div>
+    <div class="approval-card">
+      <p class="approval-hint mb-3">Apne registered mobile number ya CSC ID se latest branding approval status check karein.</p>
+      <form id="approvalForm" onsubmit="checkApprovalStatusFromPage(); return false;">
+        <div class="mb-3">
+          <label for="approvalLookupType" class="form-label">Search by *</label>
+          <select id="approvalLookupType" class="form-select" required onchange="updateApprovalInput()">
+            <option value="mobile">Mobile Number</option>
+            <option value="csc">CSC ID</option>
+          </select>
+        </div>
+        <div class="mb-3">
+          <label for="approvalLookupValue" id="approvalLookupLabel" class="form-label">Mobile Number *</label>
+          <input type="text" id="approvalLookupValue" class="form-control" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="Enter registered mobile number" required>
+          <div id="approvalLookupHint" class="approval-hint mt-1">10 digit registered mobile number daalein.</div>
+        </div>
+        <button type="submit" id="approvalCheckButton" class="btn btn-submit">Check Status</button>
+      </form>
+      <div id="approvalResult" class="approval-result" role="status" aria-live="polite"></div>
+    </div>
+  </section>
 </div>
 
 <script>
@@ -246,6 +288,66 @@
   const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbznxRi2TAlxOA1oZlwTBlylbW-KqQZap1fa5U2b-IZ65F3bjGPMQD1MiLZ7hadhZQe-/exec';
   let submitTimer = null;
   let pendingRequestId = null;
+
+  function switchPortalTab(tab) {
+    const uploadActive = tab === 'upload';
+    document.getElementById('uploadPanel').style.display = uploadActive ? 'block' : 'none';
+    document.getElementById('approvalPanel').style.display = uploadActive ? 'none' : 'block';
+    document.getElementById('uploadTabButton').classList.toggle('active', uploadActive);
+    document.getElementById('approvalTabButton').classList.toggle('active', !uploadActive);
+    document.getElementById('uploadTabButton').setAttribute('aria-selected', String(uploadActive));
+    document.getElementById('approvalTabButton').setAttribute('aria-selected', String(!uploadActive));
+  }
+
+  function updateApprovalInput() {
+    const isMobile = document.getElementById('approvalLookupType').value === 'mobile';
+    document.getElementById('approvalLookupLabel').innerText = isMobile ? 'Mobile Number *' : 'CSC ID *';
+    document.getElementById('approvalLookupValue').placeholder = isMobile ? 'Enter registered mobile number' : 'Enter CSC ID';
+    document.getElementById('approvalLookupValue').inputMode = isMobile ? 'numeric' : 'text';
+    document.getElementById('approvalLookupValue').maxLength = isMobile ? 13 : 40;
+    document.getElementById('approvalLookupValue').autocomplete = isMobile ? 'tel' : 'off';
+    document.getElementById('approvalLookupHint').innerText = isMobile ? '10 digit registered mobile number daalein.' : 'Wahi CSC ID daalein jo upload form mein diya tha.';
+  }
+
+  function checkApprovalStatusFromPage() {
+    const type = document.getElementById('approvalLookupType').value;
+    const input = document.getElementById('approvalLookupValue');
+    const value = input.value.trim();
+    const button = document.getElementById('approvalCheckButton');
+    const resultBox = document.getElementById('approvalResult');
+    if (type === 'mobile' && !/^\+?[0-9\s()-]{10,13}$/.test(value)) {
+      input.setCustomValidity('10 digit valid mobile number daalein.');
+      input.reportValidity();
+      input.setCustomValidity('');
+      return;
+    }
+    resultBox.className = 'approval-result neutral';
+    resultBox.textContent = 'Status check ho raha hai...';
+    button.disabled = true;
+    button.innerText = 'Checking...';
+    loadBackendJsonp({ action: 'approval', type: type, value: value }, function(data) {
+      button.disabled = false;
+      button.innerText = 'Check Status';
+      if (data && data.error) {
+        resultBox.className = 'approval-result neutral';
+        resultBox.textContent = 'Status check nahi ho saka. Thodi der baad try karein.';
+      } else if (data && data.found) {
+        const status = String(data.status || 'Pending').trim();
+        const isApproved = status.toLowerCase() === 'approved';
+        resultBox.className = 'approval-result ' + (isApproved ? 'approved' : 'pending');
+        resultBox.textContent = 'Branding Status: ' + status;
+      } else {
+        resultBox.className = 'approval-result neutral';
+        resultBox.textContent = 'Is detail se koi branding submission nahi mila. Mobile number ya CSC ID dobara check karein.';
+      }
+    }, function() {
+      button.disabled = false;
+      button.innerText = 'Check Status';
+      resultBox.className = 'approval-result neutral';
+      resultBox.textContent = 'Backend se status response nahi mila. Thodi der baad try karein.';
+    });
+  }
+
 
   function handleSubmissionResult(res) {
     clearTimeout(submitTimer);
