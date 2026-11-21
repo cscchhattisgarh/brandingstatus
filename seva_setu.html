@@ -247,31 +247,61 @@
   let submitTimer = null;
   let pendingRequestId = null;
 
-  window.addEventListener('message', function(event) {
-    if (!event.data || event.data.type !== 'sewasetu-submit' || event.data.requestId !== pendingRequestId) return;
+  function handleSubmissionResult(res) {
     clearTimeout(submitTimer);
     const btn = document.getElementById('btnSubmit');
     const msg = document.getElementById('responseMsg');
     btn.disabled = false;
     btn.innerText = 'Submit Data & Branding Photo';
-    const res = event.data.result || {};
-    if (res.success) {
+    if (res && res.success) {
       msg.className = 'mt-3 text-center text-success fw-bold';
       msg.innerText = '🎉 ' + res.message;
       document.getElementById('brandingForm').reset();
       document.getElementById('gpsStatus').innerText = '';
     } else {
       msg.className = 'mt-3 text-center text-danger fw-bold';
-      msg.innerText = '❌ Error: ' + (res.message || 'Submission failed.');
+      msg.innerText = '❌ Error: ' + ((res && res.message) || 'Submission failed.');
     }
-  });
+  }
 
-  function loadMasterData() {
+  function loadBackendJsonp(params, onSuccess, onError) {
     const script = document.createElement('script');
-    const callbackName = '__sewaMasterData_' + Date.now();
-    window[callbackName] = function(res) {
+    const callbackName = '__sewaCallback_' + Date.now() + Math.random().toString(36).slice(2);
+    window[callbackName] = function(data) {
       delete window[callbackName];
       script.remove();
+      onSuccess(data);
+    };
+    script.onerror = function() {
+      delete window[callbackName];
+      script.remove();
+      if (onError) onError();
+    };
+    const query = new URLSearchParams(Object.assign({}, params, { callback: callbackName, _: Date.now() }));
+    script.src = BACKEND_URL + '?' + query.toString();
+    document.body.appendChild(script);
+  }
+
+  function pollSubmissionResult(requestId, deadline) {
+    loadBackendJsonp({ action: 'status', id: requestId }, function(data) {
+      if (data && data.ready && data.result) {
+        handleSubmissionResult(data.result);
+      } else if (Date.now() >= deadline) {
+        handleSubmissionResult({ success: false, message: 'Submission ka response nahi mila. Sheet mein entry check karke hi dobara submit karein.' });
+      } else {
+        setTimeout(function() { pollSubmissionResult(requestId, deadline); }, 2000);
+      }
+    }, function() {
+      if (Date.now() >= deadline) {
+        handleSubmissionResult({ success: false, message: 'Backend se response nahi mila. Sheet mein entry check karke hi dobara submit karein.' });
+      } else {
+        setTimeout(function() { pollSubmissionResult(requestId, deadline); }, 3000);
+      }
+    });
+  }
+
+  function loadMasterData() {
+    loadBackendJsonp({ action: 'master' }, function(res) {
       if (res && res.success) {
         masterData = res;
         document.getElementById('loadingSpinner').style.display = 'none';
@@ -279,13 +309,9 @@
       } else {
         document.getElementById('loadingSpinner').innerText = 'Master data load nahi ho saka: ' + ((res && res.error) || 'Unknown error');
       }
-    };
-    script.onerror = function() {
-      delete window[callbackName];
+    }, function() {
       document.getElementById('loadingSpinner').innerText = 'Backend se master data load nahi ho saka. Refresh karke dobara try karein.';
-    };
-    script.src = BACKEND_URL + '?action=master&callback=' + callbackName + '&_=' + Date.now();
-    document.body.appendChild(script);
+    });
   }
 
   function compressPhoto(file) {
@@ -437,11 +463,9 @@ async function handleFormSubmit(form) {
       btn.innerText = 'Submitting Data... Please wait...';
       postForm.submit();
       postForm.remove();
+      pollSubmissionResult(pendingRequestId, Date.now() + 60000);
       submitTimer = setTimeout(function() {
-        btn.disabled = false;
-        btn.innerText = 'Submit Data & Branding Photo';
-        msg.className = 'mt-3 text-center text-danger fw-bold';
-        msg.innerText = 'Submission ka response nahi mila. Network check karke dobara try karein.';
+        handleSubmissionResult({ success: false, message: 'Submission ka response nahi mila. Sheet mein entry check karke hi dobara submit karein.' });
       }, 60000);
     } catch (error) {
       btn.disabled = false;
