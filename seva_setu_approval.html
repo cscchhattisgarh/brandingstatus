@@ -24,13 +24,13 @@
     .notice { display: none; margin-bottom: 14px; padding: 12px 16px; border-radius: 10px; font-size: .9rem; font-weight: 600; }
     .notice.success { display: block; color: #166534; background: #dcfce7; }
     .notice.error { display: block; color: #991b1b; background: #fee2e2; }
-    .queue { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
-    .qc-card { min-width: 0; overflow: hidden; border: 1px solid #e2e8f0; border-radius: 15px; background: #fff; box-shadow: 0 12px 28px rgba(0,0,0,.16); }
-    .photo-wrap { position: relative; display: grid; min-height: 245px; max-height: 390px; place-items: center; overflow: hidden; background: #e2e8f0; }
-    .photo-wrap img { display: block; width: 100%; height: 100%; max-height: 390px; object-fit: contain; background: #e2e8f0; }
+    .queue { display: grid; grid-template-columns: 1fr; gap: 14px; }
+    .qc-card { display: grid; grid-template-columns: minmax(230px, 28%) minmax(0,1fr); min-width: 0; overflow: hidden; border: 1px solid #e2e8f0; border-radius: 15px; background: #fff; box-shadow: 0 12px 28px rgba(0,0,0,.16); }
+    .photo-wrap { position: relative; display: grid; min-height: 220px; max-height: 300px; height: 100%; place-items: center; overflow: hidden; background: #e2e8f0; }
+    .photo-wrap img { display: block; width: 100%; height: 100%; min-height: 220px; max-height: 300px; object-fit: contain; background: #e2e8f0; }
     .photo-placeholder { padding: 32px 16px; color: #64748b; text-align: center; }
     .photo-open { position: absolute; right: 12px; bottom: 12px; padding: 7px 10px; border-radius: 8px; color: #0f172a; text-decoration: none; font-size: .78rem; font-weight: 600; background: rgba(255,255,255,.94); }
-    .card-body { padding: 17px; }
+    .card-body { min-width: 0; padding: 16px 19px; }
     .card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
     .card-heading h2 { margin: 0; color: #0f2f53; font-size: 1rem; font-weight: 700; overflow-wrap: anywhere; }
     .card-heading p { margin: 4px 0 0; color: #64748b; font-size: .82rem; }
@@ -38,15 +38,19 @@
     .status-badge.pending { color: #92400e; background: #fef3c7; }
     .status-badge.approved { color: #166534; background: #dcfce7; }
     .status-badge.rejected { color: #991b1b; background: #fee2e2; }
-    .details { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 14px; margin: 0 0 13px; }
+    .details { display: grid; grid-template-columns: 1fr 1fr; gap: 7px 14px; margin: 0 0 8px; }
     .detail { min-width: 0; }
     .detail-label { display: block; color: #94a3b8; font-size: .68rem; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; }
     .detail-value { display: block; margin-top: 2px; color: #334155; font-size: .82rem; overflow-wrap: anywhere; }
     .existing-remark { margin: 10px 0; padding: 9px 11px; border-left: 3px solid #f59e0b; border-radius: 5px; color: #713f12; font-size: .8rem; background: #fffbeb; white-space: pre-wrap; }
-    .remark-label { margin: 12px 0 5px; color: #475569; font-size: .78rem; font-weight: 600; }
-    .remark-input { width: 100%; min-height: 70px; resize: vertical; border: 1px solid #cbd5e1; border-radius: 9px; padding: 9px 11px; color: #334155; font-size: .82rem; }
+    .remark-area { display: none; margin-top: 10px; padding: 12px; border: 1px solid #fecaca; border-radius: 10px; background: #fff7f7; }
+    .remark-area.open { display: block; }
+    .remark-label { margin: 0 0 5px; color: #475569; font-size: .78rem; font-weight: 600; }
+    .remark-input { width: 100%; height: 42px; min-height: 42px; border: 1px solid #cbd5e1; border-radius: 9px; padding: 8px 11px; color: #334155; font-size: .82rem; background: #fff; }
     .remark-input:focus { outline: 0; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.12); }
-    .card-actions { display: flex; gap: 9px; margin-top: 10px; }
+    .card-actions { display: flex; gap: 9px; margin-top: 8px; }
+    .cancel-reject-btn { display: none; margin-top: 8px; padding: 6px 10px; border: 0; border-radius: 7px; color: #475569; font-size: .78rem; font-weight: 600; background: #e2e8f0; }
+    .remark-area.open .cancel-reject-btn { display: inline-block; }
     .action-btn { flex: 1; padding: 9px 12px; border: 0; border-radius: 9px; color: #fff; font-size: .82rem; font-weight: 700; }
     .approve-btn { background: linear-gradient(90deg,#15803d,#16a34a); }
     .reject-btn { background: linear-gradient(90deg,#b91c1c,#dc2626); }
@@ -55,8 +59,31 @@
     .pager { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 20px; color: #fff; font-size: .85rem; font-weight: 600; }
     .pager button { padding: 8px 13px; border: 1px solid rgba(255,255,255,.38); border-radius: 8px; color: #fff; background: rgba(255,255,255,.12); }
     .pager button:disabled { opacity: .4; }
-    @media(max-width:800px) { .queue { grid-template-columns: 1fr; } }
-    @media(max-width:560px) { body { padding: 14px 10px 30px; } .topbar { padding: 19px; } .toolbar { align-items: flex-start; flex-direction: column; } .toolbar-left { width: 100%; } .form-select { width: 100%; } .details { grid-template-columns: 1fr 1fr; } .photo-wrap { min-height: 210px; } }
+    @media(max-width:760px) { .qc-card { grid-template-columns: minmax(190px, 34%) minmax(0,1fr); } .photo-wrap, .photo-wrap img { min-height: 200px; max-height: 260px; } }
+    @media(max-width:620px) { body { padding: 14px 10px 30px; } .topbar { padding: 19px; } .toolbar { align-items: flex-start; flex-direction: column; } .toolbar-left { width: 100%; } .form-select { width: 100%; } .qc-card { grid-template-columns: 1fr; } .photo-wrap, .photo-wrap img { height: 230px; min-height: 230px; max-height: 230px; } .card-body { padding: 15px; } }
+
+    .process-modal { display: none; position: fixed; inset: 0; z-index: 9999; place-items: center; padding: 18px; background: rgba(10,25,41,.62); backdrop-filter: blur(4px); }
+    .process-modal.open { display: grid; }
+    .process-dialog { width: min(420px,100%); padding: 28px 25px 24px; border: 1px solid #e2e8f0; border-radius: 18px; text-align: center; background: #fff; box-shadow: 0 24px 70px rgba(0,0,0,.28); }
+    .process-spinner { width: 52px; height: 52px; margin: 0 auto 17px; border: 5px solid #dbeafe; border-top-color: #0055a5; border-radius: 50%; animation: qc-spin .8s linear infinite; }
+    @keyframes qc-spin { to { transform: rotate(360deg); } }
+    .process-icon { display: grid; width: 54px; height: 54px; margin: 0 auto 17px; place-items: center; border-radius: 50%; font-size: 1.7rem; font-weight: 700; }
+    .process-icon.ok { color: #166534; background: #dcfce7; }
+    .process-icon.fail { color: #991b1b; background: #fee2e2; }
+    .process-dialog h2 { margin: 0 0 8px; color: #0f2f53; font-size: 1.18rem; font-weight: 700; }
+    .process-dialog p { margin: 0; color: #64748b; font-size: .9rem; line-height: 1.5; }
+    .modal-close { margin-top: 20px; padding: 9px 20px; border: 0; border-radius: 9px; color: #fff; font-size: .85rem; font-weight: 700; background: #0055a5; }
+
+    .review-locked { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 9px; color: #64748b; font-size: .82rem; font-weight: 600; background: #f8fafc; }
+    .reject-icon { display: grid; width: 46px; height: 46px; margin: 0 auto 12px; place-items: center; border-radius: 50%; color: #991b1b; font-size: 1.25rem; font-weight: 700; background: #fee2e2; }
+    .reject-intro { margin-bottom: 17px !important; }
+    .reject-field-label { display: block; margin: 12px 0 6px; color: #475569; text-align: left; font-size: .82rem; font-weight: 600; }
+    .reject-reason-select, .other-reason-input { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 9px; color: #334155; font-size: .86rem; background: #fff; }
+    .other-reason-input { min-height: 90px; resize: vertical; }
+    .reject-modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+    .reject-modal-actions button { flex: 1; padding: 10px 12px; border: 0; border-radius: 9px; font-size: .84rem; font-weight: 700; }
+    .reject-cancel { color: #475569; background: #e2e8f0; }
+    .reject-submit { color: #fff; background: linear-gradient(90deg,#b91c1c,#dc2626); }
   </style>
 </head>
 <body>
@@ -89,12 +116,81 @@
     </nav>
   </main>
 
+  <div id="processModal" class="process-modal" role="dialog" aria-modal="true" aria-labelledby="processModalTitle" aria-describedby="processModalMessage">
+    <div class="process-dialog">
+      <div id="processSpinner" class="process-spinner" aria-hidden="true"></div>
+      <div id="processIcon" class="process-icon" style="display:none" aria-hidden="true"></div>
+      <h2 id="processModalTitle">Processing decision</h2>
+      <p id="processModalMessage">Please wait while the sheet is updated.</p>
+      <button id="processModalClose" type="button" class="modal-close" style="display:none" onclick="closeProcessModal()">Close</button>
+    </div>
+  </div>
+  <div id="rejectModal" class="process-modal" role="dialog" aria-modal="true" aria-labelledby="rejectModalTitle">
+    <div class="process-dialog reject-dialog">
+      <div class="reject-icon" aria-hidden="true">✕</div>
+      <h2 id="rejectModalTitle">Reject branding submission</h2>
+      <p class="reject-intro">Rejection reason select karein. Other select karne par detail likhein.</p>
+      <label for="rejectReasonSelect" class="reject-field-label">Rejection reason *</label>
+      <select id="rejectReasonSelect" class="reject-reason-select" onchange="toggleOtherReason()" required>
+        <option value="">Select a reason</option>
+        <option value="ब्रांडिंग फोटो स्पष्ट नहीं है">ब्रांडिंग फोटो स्पष्ट नहीं है</option>
+        <option value="CSC / सेवा सेतु बोर्ड फोटो में दिखाई नहीं दे रहा">CSC / सेवा सेतु बोर्ड फोटो में दिखाई नहीं दे रहा</option>
+        <option value="निर्धारित ब्रांडिंग फॉर्मेट का पालन नहीं किया गया">निर्धारित ब्रांडिंग फॉर्मेट का पालन नहीं किया गया</option>
+        <option value="Other">Other</option>
+      </select>
+      <div id="otherReasonWrap" style="display:none">
+        <label for="otherReasonInput" class="reject-field-label">Please specify *</label>
+        <textarea id="otherReasonInput" class="other-reason-input" maxlength="1000" placeholder="Write the rejection reason"></textarea>
+      </div>
+      <div class="reject-modal-actions">
+        <button type="button" class="reject-cancel" onclick="closeRejectModal()">Cancel</button>
+        <button type="button" class="reject-submit" onclick="submitRejection()">Submit Rejection</button>
+      </div>
+    </div>
+  </div>
   <iframe id="backendFrame" name="backendFrame" title="QC update response" style="display:none"></iframe>
   <script>
     const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbznxRi2TAlxOA1oZlwTBlylbW-KqQZap1fa5U2b-IZ65F3bjGPMQD1MiLZ7hadhZQe-/exec';
     let currentPage = 1;
     let totalPages = 1;
     let requestTimer = null;
+    let selectedRejectRow = null;
+    let selectedRejectCard = null;
+
+    function openRejectModal(row, card) {
+      selectedRejectRow = row; selectedRejectCard = card;
+      document.getElementById('rejectReasonSelect').value = '';
+      document.getElementById('otherReasonInput').value = '';
+      document.getElementById('otherReasonWrap').style.display = 'none';
+      document.getElementById('otherReasonInput').required = false;
+      document.getElementById('rejectModal').classList.add('open');
+    }
+
+    function closeRejectModal() {
+      document.getElementById('rejectModal').classList.remove('open');
+      selectedRejectRow = null; selectedRejectCard = null;
+    }
+
+    function toggleOtherReason() {
+      const isOther = document.getElementById('rejectReasonSelect').value === 'Other';
+      document.getElementById('otherReasonWrap').style.display = isOther ? 'block' : 'none';
+      document.getElementById('otherReasonInput').required = isOther;
+    }
+
+    function submitRejection() {
+      const reason = document.getElementById('rejectReasonSelect').value;
+      const otherInput = document.getElementById('otherReasonInput');
+      if (!reason) { document.getElementById('rejectReasonSelect').reportValidity(); return; }
+      let remark = reason;
+      if (reason === 'Other') {
+        remark = otherInput.value.trim();
+        if (!remark) { otherInput.setCustomValidity('Rejection remark likhein.'); otherInput.reportValidity(); otherInput.setCustomValidity(''); return; }
+      }
+      const row = selectedRejectRow; const card = selectedRejectCard;
+      closeRejectModal();
+      updateEntry(row, 'Rejected', remark, card);
+    }
+
 
     function loadJsonp(params, onSuccess, onError) {
       const script = document.createElement('script');
@@ -130,7 +226,9 @@
       const title = document.createElement('h2'); title.textContent = entry.cscId ? 'CSC ID: ' + entry.cscId : 'Branding submission';
       const sub = document.createElement('p'); sub.textContent = entry.vleName || 'VLE name not provided';
       headingText.append(title, sub);
-      const status = (entry.status || 'Pending').trim();
+      const rawStatus = (entry.status || 'Pending').trim();
+      const statusKey = rawStatus.toLowerCase();
+      const status = statusKey === 'approve' ? 'Approved' : (statusKey === 'reject' ? 'Rejected' : rawStatus);
       const badge = document.createElement('span'); badge.className = 'status-badge ' + status.toLowerCase(); badge.textContent = status;
       heading.append(headingText, badge);
       const details = document.createElement('div'); details.className = 'details';
@@ -139,15 +237,19 @@
       addDetail(details, 'Location', [entry.district, entry.block, entry.gpCity, entry.villageWard].filter(Boolean).join(' / '));
       addDetail(details, 'Type', entry.locationType);
       body.append(heading, details);
-      if (entry.remark) { const oldRemark = document.createElement('div'); oldRemark.className = 'existing-remark'; oldRemark.textContent = 'Current remark: ' + entry.remark; body.appendChild(oldRemark); }
-      const remarkLabel = document.createElement('label'); remarkLabel.className = 'remark-label'; remarkLabel.textContent = 'Rejection remark (required when rejecting)';
-      const remark = document.createElement('textarea'); remark.className = 'remark-input'; remark.maxLength = 1000; remark.placeholder = 'Write the reason for rejection'; remark.value = entry.remark || '';
-      const actions = document.createElement('div'); actions.className = 'card-actions';
-      const approve = document.createElement('button'); approve.type = 'button'; approve.className = 'action-btn approve-btn'; approve.textContent = '✓ Approve';
-      const reject = document.createElement('button'); reject.type = 'button'; reject.className = 'action-btn reject-btn'; reject.textContent = '✕ Reject';
-      approve.onclick = function() { updateEntry(entry.row, 'Approved', '', card); };
-      reject.onclick = function() { if (!remark.value.trim()) { remark.focus(); remark.setCustomValidity('Rejection remark is required.'); remark.reportValidity(); remark.setCustomValidity(''); return; } updateEntry(entry.row, 'Rejected', remark.value.trim(), card); };
-      actions.append(approve, reject); body.append(remarkLabel, remark, actions);
+      if (entry.remark) { const oldRemark = document.createElement('div'); oldRemark.className = 'existing-remark'; oldRemark.textContent = 'Rejection remark: ' + entry.remark; body.appendChild(oldRemark); }
+      if (status.toLowerCase() === 'pending' || !status) {
+        const actions = document.createElement('div'); actions.className = 'card-actions';
+        const approve = document.createElement('button'); approve.type = 'button'; approve.className = 'action-btn approve-btn'; approve.textContent = '✓ Approve';
+        const reject = document.createElement('button'); reject.type = 'button'; reject.className = 'action-btn reject-btn'; reject.textContent = '✕ Reject';
+        approve.onclick = function() { updateEntry(entry.row, 'Approved', '', card); };
+        reject.onclick = function() { openRejectModal(entry.row, card); };
+        actions.append(approve, reject); body.appendChild(actions);
+      } else {
+        const locked = document.createElement('p'); locked.className = 'review-locked';
+        locked.textContent = status === 'Approved' ? 'QC review complete — this submission is approved.' : 'QC review complete — this submission is rejected.';
+        body.appendChild(locked);
+      }
       card.append(photoWrap, body); return card;
     }
 
@@ -177,37 +279,61 @@
       });
     }
 
-    function showNotice(message, kind) {
-      const box = document.getElementById('notice'); box.className = 'notice ' + kind; box.textContent = message;
+    function showProcessingPopup() {
+      document.getElementById('processModal').classList.add('open');
+      document.getElementById('processSpinner').style.display = 'block';
+      document.getElementById('processIcon').style.display = 'none';
+      document.getElementById('processModalTitle').textContent = 'Processing QC decision…';
+      document.getElementById('processModalMessage').textContent = 'Please wait while the approval status is saved.';
+      document.getElementById('processModalClose').style.display = 'none';
     }
 
+    function showPopupResult(success, message) {
+      document.getElementById('processSpinner').style.display = 'none';
+      const icon = document.getElementById('processIcon');
+      icon.style.display = 'grid'; icon.className = 'process-icon ' + (success ? 'ok' : 'fail'); icon.textContent = success ? '✓' : '!';
+      document.getElementById('processModalTitle').textContent = success ? 'Update complete' : 'Update failed';
+      document.getElementById('processModalMessage').textContent = message;
+      document.getElementById('processModalClose').style.display = 'inline-block';
+    }
+
+    function closeProcessModal() { document.getElementById('processModal').classList.remove('open'); }
+
     function updateEntry(row, status, remark, card) {
-      if (status === 'Approved' && !window.confirm('Is branding submission ko approve karein?')) return;
-      if (status === 'Rejected' && !window.confirm('Is branding submission ko reject karein?')) return;
-      card.querySelectorAll('button,textarea').forEach(function(el) { el.disabled = true; });
-      showNotice('Status update ho raha hai…', 'success');
+      card.querySelectorAll('button,select').forEach(function(el) { el.disabled = true; });
+      showProcessingPopup();
       const requestId = 'qc-' + ((window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(36).slice(2));
       const payload = { action: 'qcUpdate', requestId: requestId, row: row, status: status, remark: remark };
       const form = document.createElement('form'); form.method = 'POST'; form.action = BACKEND_URL; form.target = 'backendFrame'; form.style.display = 'none';
       const input = document.createElement('input'); input.type = 'hidden'; input.name = 'payload'; input.value = JSON.stringify(payload); form.appendChild(input); document.body.appendChild(form); form.submit(); form.remove();
-      const deadline = Date.now() + 60000;
+      const deadline = Date.now() + 30000;
       pollUpdate(requestId, deadline);
       clearTimeout(requestTimer);
-      requestTimer = setTimeout(function() { showNotice('Update ka response nahi mila. Sheet mein row status check karein.', 'error'); card.querySelectorAll('button,textarea').forEach(function(el) { el.disabled = false; }); }, 60000);
+      requestTimer = setTimeout(function() {
+        showPopupResult(false, 'Update ka response nahi mila. Sheet mein row status check karein.');
+        card.querySelectorAll('button,select').forEach(function(el) { el.disabled = false; });
+      }, 30000);
     }
 
     function pollUpdate(requestId, deadline) {
       loadJsonp({ action: 'status', id: requestId }, function(data) {
         if (data && data.ready && data.result) {
           clearTimeout(requestTimer);
-          if (data.result.success) { showNotice(data.result.message, 'success'); setTimeout(function() { loadPage(currentPage); }, 700); }
-          else { showNotice(data.result.message || 'Update failed.', 'error'); document.querySelectorAll('.qc-card button, .qc-card textarea').forEach(function(el) { el.disabled = false; }); }
+          if (data.result.success) {
+            showPopupResult(true, data.result.message);
+            setTimeout(function() { loadPage(currentPage); }, 1200);
+          } else {
+            showPopupResult(false, data.result.message || 'Update failed.');
+            document.querySelectorAll('.qc-card button, .qc-card select').forEach(function(el) { el.disabled = false; });
+          }
         } else if (Date.now() >= deadline) {
-          showNotice('Update ka response nahi mila. Sheet mein row status check karein.', 'error');
-        } else { setTimeout(function() { pollUpdate(requestId, deadline); }, 2000); }
+          showPopupResult(false, 'Update ka response nahi mila. Sheet mein row status check karein.');
+        } else {
+          setTimeout(function() { pollUpdate(requestId, deadline); }, 500);
+        }
       }, function() {
-        if (Date.now() >= deadline) showNotice('Backend response unavailable. Sheet mein row status check karein.', 'error');
-        else setTimeout(function() { pollUpdate(requestId, deadline); }, 3000);
+        if (Date.now() >= deadline) showPopupResult(false, 'Backend response unavailable. Sheet mein row status check karein.');
+        else setTimeout(function() { pollUpdate(requestId, deadline); }, 1000);
       });
     }
 
