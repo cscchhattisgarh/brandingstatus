@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
-  <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sewa Setu | Branding QC Panel</title>
@@ -9,31 +8,32 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    body { min-height: 100vh; margin: 0; padding: 28px 14px 48px; color: #1e293b; background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); }
+    body { min-height: 100vh; margin: 0; padding: 28px 14px 48px; color: #263b4d; background: radial-gradient(ellipse at 8% 4%, #e2f5f1 0, transparent 34%), radial-gradient(ellipse at 92% 12%, #fff0df 0, transparent 32%), linear-gradient(135deg, #f8f7fc 0%, #f2f7f8 50%, #fff8ef 100%); }
     .page-shell { width: min(1180px, 100%); margin: auto; }
-    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 24px 28px; color: #fff; border: 1px solid rgba(255,255,255,.18); border-radius: 18px; background: rgba(255,255,255,.1); box-shadow: 0 18px 42px rgba(0,0,0,.18); backdrop-filter: blur(10px); }
-    .eyebrow { margin: 0 0 5px; color: #bfdbfe; font-size: .76rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .topbar { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 24px 28px; color: #294b63; border: 1px solid #dce9f0; border-left: 5px solid #55a99b; border-radius: 18px; background: linear-gradient(110deg,#fff 0%,#f0faf8 68%,#f2f6ff 100%); box-shadow: 0 14px 34px rgba(66,105,130,.1); }
+    .eyebrow { margin: 0 0 5px; color: #4c8ba8; font-size: .76rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
     h1 { margin: 0; font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 700; }
-    .topbar p { margin: 6px 0 0; color: #e2e8f0; font-size: .9rem; }
-    .brand-mark { display: grid; width: 54px; height: 54px; flex: 0 0 54px; place-items: center; border: 1px solid rgba(255,255,255,.38); border-radius: 16px; color: #fff; font-size: 1.2rem; font-weight: 700; background: rgba(255,255,255,.14); }
-    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 20px 0 14px; padding: 14px 16px; border-radius: 14px; background: rgba(255,255,255,.96); box-shadow: 0 12px 30px rgba(0,0,0,.14); }
+    .topbar p { margin: 6px 0 0; color: #6b8293; font-size: .9rem; }
+    .brand-mark { display: grid; width: 54px; height: 54px; flex: 0 0 54px; place-items: center; border: 1px solid #c8e1ec; border-radius: 16px; color: #327a99; font-size: 1.2rem; font-weight: 700; background: #eaf6fa; }
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin: 20px 0 14px; padding: 14px 16px; border:1px solid #d8e8ec; border-left:4px solid #72a9ce; border-radius: 14px; background: linear-gradient(100deg,#fff 0%,#f0f8fc 100%); box-shadow: 0 8px 22px rgba(66,105,130,.09); }
     .toolbar-left { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .toolbar label { margin: 0; color: #475569; font-size: .84rem; font-weight: 600; }
     .form-select { min-width: 155px; border-radius: 9px; border-color: #cbd5e1; }
     .summary { color: #64748b; font-size: .84rem; font-weight: 600; }
-    .btn-refresh { padding: 9px 14px; border: 0; border-radius: 9px; color: #fff; font-size: .84rem; font-weight: 600; background: linear-gradient(90deg,#003366,#0055a5); }
+    .btn-refresh { padding: 9px 14px; border: 0; border-radius: 9px; color: #fff; font-size: .84rem; font-weight: 600; background: linear-gradient(90deg,#398c80,#57a99a); }
     .notice { display: none; margin-bottom: 14px; padding: 12px 16px; border-radius: 10px; font-size: .9rem; font-weight: 600; }
     .notice.success { display: block; color: #166534; background: #dcfce7; }
     .notice.error { display: block; color: #991b1b; background: #fee2e2; }
     .queue { display: grid; grid-template-columns: 1fr; gap: 14px; }
-    .qc-card { display: grid; grid-template-columns: minmax(230px, 28%) minmax(0,1fr); min-width: 0; overflow: hidden; border: 1px solid #e2e8f0; border-radius: 15px; background: #fff; box-shadow: 0 12px 28px rgba(0,0,0,.16); }
+    .qc-card { display: grid; grid-template-columns: minmax(230px, 28%) minmax(0,1fr); min-width: 0; overflow: hidden; border: 1px solid #dce8ef; border-left:4px solid #79b7ac; border-radius: 15px; background: #fff; box-shadow: 0 10px 24px rgba(67,105,128,.1); }
+    .qc-card:nth-child(even) { border-left-color:#9d91cb; }
     .photo-wrap { position: relative; display: grid; min-height: 220px; max-height: 300px; height: 100%; place-items: center; overflow: hidden; background: #e2e8f0; }
     .photo-wrap img { display: block; width: 100%; height: 100%; min-height: 220px; max-height: 300px; object-fit: contain; background: #e2e8f0; }
     .photo-placeholder { padding: 32px 16px; color: #64748b; text-align: center; }
     .photo-open { position: absolute; right: 12px; bottom: 12px; padding: 7px 10px; border-radius: 8px; color: #0f172a; text-decoration: none; font-size: .78rem; font-weight: 600; background: rgba(255,255,255,.94); }
     .card-body { min-width: 0; padding: 16px 19px; }
     .card-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
-    .card-heading h2 { margin: 0; color: #0f2f53; font-size: 1rem; font-weight: 700; overflow-wrap: anywhere; }
+    .card-heading h2 { margin: 0; color: #365a70; font-size: 1rem; font-weight: 700; overflow-wrap: anywhere; }
     .card-heading p { margin: 4px 0 0; color: #64748b; font-size: .82rem; }
     .status-badge { flex: 0 0 auto; padding: 5px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700; }
     .status-badge.pending { color: #92400e; background: #fef3c7; }
@@ -57,23 +57,23 @@
     .reject-btn { background: linear-gradient(90deg,#b91c1c,#dc2626); }
     .action-btn:disabled, .btn-refresh:disabled { cursor: wait; opacity: .55; }
     .loading, .empty { padding: 42px 18px; border-radius: 14px; color: #475569; text-align: center; font-weight: 600; background: #fff; box-shadow: 0 12px 30px rgba(0,0,0,.14); }
-    .pager { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 20px; color: #fff; font-size: .85rem; font-weight: 600; }
-    .pager button { padding: 8px 13px; border: 1px solid rgba(255,255,255,.38); border-radius: 8px; color: #fff; background: rgba(255,255,255,.12); }
+    .pager { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 20px; color: #526e80; font-size: .85rem; font-weight: 600; }
+    .pager button { padding: 8px 13px; border: 1px solid #ccdde7; border-radius: 8px; color: #3b6d86; background: #fff; box-shadow: 0 3px 9px rgba(67,105,128,.07); }
     .pager button:disabled { opacity: .4; }
     @media(max-width:760px) { .qc-card { grid-template-columns: minmax(190px, 34%) minmax(0,1fr); } .photo-wrap, .photo-wrap img { min-height: 200px; max-height: 260px; } }
     @media(max-width:620px) { body { padding: 14px 10px 30px; } .topbar { padding: 19px; } .toolbar { align-items: flex-start; flex-direction: column; } .toolbar-left { width: 100%; } .form-select { width: 100%; } .qc-card { grid-template-columns: 1fr; } .photo-wrap, .photo-wrap img { height: 230px; min-height: 230px; max-height: 230px; } .card-body { padding: 15px; } }
 
-    .process-modal { display: none; position: fixed; inset: 0; z-index: 9999; place-items: center; padding: 18px; background: rgba(10,25,41,.62); backdrop-filter: blur(4px); }
+    .process-modal { display: none; position: fixed; inset: 0; z-index: 9999; place-items: center; padding: 18px; background: rgba(48,76,94,.32); backdrop-filter: blur(4px); }
     .process-modal.open { display: grid; }
     .process-dialog { width: min(420px,100%); padding: 28px 25px 24px; border: 1px solid #e2e8f0; border-radius: 18px; text-align: center; background: #fff; box-shadow: 0 24px 70px rgba(0,0,0,.28); }
-    .process-spinner { width: 52px; height: 52px; margin: 0 auto 17px; border: 5px solid #dbeafe; border-top-color: #0055a5; border-radius: 50%; animation: qc-spin .8s linear infinite; }
+    .process-spinner { width: 52px; height: 52px; margin: 0 auto 17px; border: 5px solid #e1f0f5; border-top-color: #5a9db8; border-radius: 50%; animation: qc-spin .8s linear infinite; }
     @keyframes qc-spin { to { transform: rotate(360deg); } }
     .process-icon { display: grid; width: 54px; height: 54px; margin: 0 auto 17px; place-items: center; border-radius: 50%; font-size: 1.7rem; font-weight: 700; }
     .process-icon.ok { color: #166534; background: #dcfce7; }
     .process-icon.fail { color: #991b1b; background: #fee2e2; }
-    .process-dialog h2 { margin: 0 0 8px; color: #0f2f53; font-size: 1.18rem; font-weight: 700; }
+    .process-dialog h2 { margin: 0 0 8px; color: #365a70; font-size: 1.18rem; font-weight: 700; }
     .process-dialog p { margin: 0; color: #64748b; font-size: .9rem; line-height: 1.5; }
-    .modal-close { margin-top: 20px; padding: 9px 20px; border: 0; border-radius: 9px; color: #fff; font-size: .85rem; font-weight: 700; background: #0055a5; }
+    .modal-close { margin-top: 20px; padding: 9px 20px; border: 0; border-radius: 9px; color: #fff; font-size: .85rem; font-weight: 700; background: #4d8eaa; }
 
     .review-locked { margin: 12px 0 0; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 9px; color: #64748b; font-size: .82rem; font-weight: 600; background: #f8fafc; }
     .reject-icon { display: grid; width: 46px; height: 46px; margin: 0 auto 12px; place-items: center; border-radius: 50%; color: #991b1b; font-size: 1.25rem; font-weight: 700; background: #fee2e2; }
@@ -85,6 +85,61 @@
     .reject-modal-actions button { flex: 1; padding: 10px 12px; border: 0; border-radius: 9px; font-size: .84rem; font-weight: 700; }
     .reject-cancel { color: #475569; background: #e2e8f0; }
     .reject-submit { color: #fff; background: linear-gradient(90deg,#b91c1c,#dc2626); }
+
+    .admin-tabs { display: flex; gap: 9px; margin: 18px 0 14px; padding: 6px; border:1px solid #dce5ec; border-radius: 12px; background: linear-gradient(100deg,#e8f4f2,#f0edf9,#fff3e8); }
+    .admin-tab { flex: 1; padding: 10px 14px; border: 1px solid transparent; border-radius: 9px; color: #668194; font-size: .88rem; font-weight: 700; background: transparent; }
+    .admin-tab.active { color: #fff; border-color: #4d9d91; background: linear-gradient(120deg,#4d9d91,#67b1a4); box-shadow: 0 4px 12px rgba(74,130,158,.18); }
+    #summaryTabButton.active { border-color:#8175b3; background:linear-gradient(120deg,#8175b3,#a095cb); }
+    .summary-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin: 0 0 14px; padding: 14px 16px; border:1px solid #e4dff0; border-left:4px solid #9688c2; border-radius: 14px; background:linear-gradient(100deg,#fff,#f7f4fc); box-shadow:0 8px 20px rgba(83,73,124,.08); }
+    .summary-toolbar p { margin:0; color:#64748b; font-size:.84rem; }
+    .summary-actions { display:flex; gap:9px; flex-wrap:wrap; }
+    .summary-action { padding:9px 13px; border:1px solid #cbd5e1; border-radius:9px; color:#365a70; font-size:.82rem; font-weight:700; background:#fff; }
+    .summary-action.primary { border-color:#5b9f92; color:#fff; background:linear-gradient(90deg,#4a9588,#62ad9f); }
+    .summary-kpis { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-bottom:14px; }
+    .summary-kpi { padding:15px; border:1px solid #dbe5ef; border-top:4px solid #71a9c6; border-radius:13px; background:linear-gradient(150deg,#fff,#f3f9fc); box-shadow:0 8px 20px rgba(67,105,128,.07); }
+    .summary-kpi:nth-child(2) { border-top-color:#54a596; background:linear-gradient(150deg,#fff,#eef9f5); }
+    .summary-kpi:nth-child(3) { border-top-color:#8276b6; background:linear-gradient(150deg,#fff,#f5f2fb); }
+    .summary-kpi:nth-child(4) { border-top-color:#dc8e78; background:linear-gradient(150deg,#fff,#fff3ef); }
+    .summary-kpi:nth-child(5) { border-top-color:#d4a84e; background:linear-gradient(150deg,#fff,#fff9e9); }
+    .summary-kpi span { display:block; color:#64748b; font-size:.72rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; }
+    .summary-kpi strong { display:block; margin-top:5px; color:#365a70; font-size:1.35rem; }
+    .report-card { overflow:hidden; border:1px solid #dbe5ef; border-radius:14px; background:#fff; box-shadow:0 10px 26px rgba(15,47,83,.1); }
+    .report-title { padding:13px 16px; border-bottom:1px solid #c8dfe9; color:#31566c; text-align:center; font-size:1.1rem; font-weight:700; background:linear-gradient(90deg,#e7f3f8,#edf7f2,#f5f0fb); }
+    .report-scroll { max-height:72vh; overflow:auto; }
+    .report-table { width:100%; min-width:850px; border-collapse:collapse; table-layout:fixed; }
+    .report-table th,.report-table td { padding:8px 9px; border:1px solid #d5dee8; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .report-table th:nth-child(1) { width:55px; }
+    .report-table th:nth-child(2) { width:240px; }
+    .report-table th:nth-child(3) { width:125px; }
+    .report-table th:nth-child(4) { width:155px; }
+    .report-table th:nth-child(5),.report-table th:nth-child(6) { width:115px; }
+    .report-table th:nth-child(7) { width:135px; }
+    .report-table thead th { position:sticky; top:0; z-index:2; padding:0; color:#355b70; font-size:.81rem; font-weight:700; background:#dcecf3; }
+    .report-table tbody tr:not(.total-row):nth-child(even) { background:#f5f8fc; }
+    .report-table tbody tr:not(.total-row):hover { background:#edf6f5; }
+    .sort-button { display:flex; width:100%; align-items:center; justify-content:center; gap:6px; padding:10px 6px; border:0; color:inherit; font:inherit; background:transparent; cursor:pointer; }
+    .sort-button:hover,.sort-button:focus-visible { background:#c9e1eb; outline:0; }
+    .sort-indicator { color:#6d9bb0; font-size:.72rem; }
+    .report-table th:nth-child(2) .sort-button,.report-table td:nth-child(2) { text-align:left; }
+    .report-table tbody tr.total-row td { position:sticky; top:39px; z-index:1; font-weight:700; background:#e9eff8; }
+    .report-table td.achievement-cell { font-weight:700; }
+    .summary-loading,.summary-error { padding:40px 16px; border-radius:14px; color:#475569; text-align:center; font-weight:600; background:#fff; }
+    @media(max-width:900px) { .summary-kpis { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+    @media(max-width:560px) { .summary-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } .admin-tab { font-size:.78rem; padding:9px 6px; } .summary-toolbar { align-items:flex-start; flex-direction:column; } .report-table th,.report-table td { padding:7px 8px; font-size:.76rem; } }
+    @media print {
+      @page { size:landscape; margin:12mm; }
+      body { padding:0; color:#111827; background:#fff; }
+      body * { visibility:hidden !important; }
+      #summaryPanel,#summaryPanel * { visibility:visible !important; }
+      #summaryPanel { display:block !important; position:absolute; inset:0; width:100%; }
+      .summary-toolbar,#summaryTabButton,#qcTabButton { display:none !important; }
+      .summary-kpis { grid-template-columns:repeat(5,1fr); }
+      .summary-kpi,.report-card { box-shadow:none; break-inside:avoid; }
+      .report-scroll { max-height:none; overflow:visible; }
+      .report-table { min-width:0; width:100%; font-size:9pt; }
+      .report-table thead th,.report-table tbody tr.total-row td { position:static; }
+      .sort-button { padding:6px 3px; }
+    }
   </style>
 </head>
 <body>
@@ -93,7 +148,12 @@
       <div><p class="eyebrow">CSC &amp; Sewa Setu</p><h1>Branding QC Panel</h1><p>Review uploaded branding photos and record approval decisions.</p></div>
       <div class="brand-mark" aria-hidden="true">QC</div>
     </header>
+    <nav class="admin-tabs" aria-label="QC panel pages">
+      <button type="button" id="qcTabButton" class="admin-tab active" aria-selected="true" onclick="switchAdminTab('qc')">QC Review</button>
+      <button type="button" id="summaryTabButton" class="admin-tab" aria-selected="false" onclick="switchAdminTab('summary')">Summary Report</button>
+    </nav>
 
+    <section id="qcPanel">
     <section class="toolbar" aria-label="Queue controls">
       <div class="toolbar-left">
         <label for="statusFilter">Show</label>
@@ -115,6 +175,19 @@
       <span id="pageLabel"></span>
       <button id="nextButton" type="button" onclick="loadPage(currentPage + 1)">Next →</button>
     </nav>
+    </section>
+
+    <section id="summaryPanel" style="display:none" aria-labelledby="summaryTabButton">
+      <div class="summary-toolbar">
+        <p>District-wise branding progress; achievement is calculated as Approved ÷ Target.</p>
+        <div class="summary-actions">
+          <button id="exportExcelButton" class="summary-action primary" type="button" onclick="exportSummaryExcel()">↓ Export to Excel</button>
+          <button class="summary-action" type="button" onclick="exportSummaryPdf()">▤ Export to PDF</button>
+          <button id="summaryRefreshButton" class="btn-refresh" type="button" onclick="loadSummary()">↻ Refresh</button>
+        </div>
+      </div>
+      <div id="summaryArea" class="summary-loading"><span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading summary…</div>
+    </section>
   </main>
 
   <div id="processModal" class="process-modal" role="dialog" aria-modal="true" aria-labelledby="processModalTitle" aria-describedby="processModalMessage">
@@ -134,13 +207,10 @@
       <label for="rejectReasonSelect" class="reject-field-label">Rejection reason *</label>
       <select id="rejectReasonSelect" class="reject-reason-select" onchange="toggleOtherReason()" required>
         <option value="">Select a reason</option>
-        <option value="दुकान के बाहर ब्रांडिंग नहीं लगाई गई है।">दुकान के बाहर ब्रांडिंग नहीं लगाई गई है।</option>
-        <option value="ब्रांडिंग लोहे के फ्रेम में नहीं लगाई गई है।">ब्रांडिंग लोहे के फ्रेम में नहीं लगाई गई है।</option>
-        <option value="ब्रांडिंग सेवा सेतु एवं CSC की संयुक्त (कॉमन) ब्रांडिंग नहीं है।">ब्रांडिंग सेवा सेतु एवं CSC की संयुक्त (कॉमन) ब्रांडिंग नहीं है।</option>
-        <option value="दुकान के ऊपर ब्रांडिंग नहीं लगाई गई है।">दुकान के ऊपर ब्रांडिंग नहीं लगाई गई है।</option>
-        <option value="आपने AI द्वारा तैयार किया गया फोटो अपलोड किया है।">आपने AI द्वारा तैयार किया गया फोटो अपलोड किया है।</option>
-        <option value="दुकान के बाहर ऊपर लोहे के फ्रेम में CSC एवं सेवा सेतु की संयुक्त ब्रांडिंग नहीं लगाई गई है।">दुकान के बाहर ऊपर लोहे के फ्रेम में CSC एवं सेवा सेतु की संयुक्त ब्रांडिंग नहीं लगाई गई है।</option>
-       <option value="अन्य">अन्य</option>
+        <option value="ब्रांडिंग फोटो स्पष्ट नहीं है">ब्रांडिंग फोटो स्पष्ट नहीं है</option>
+        <option value="CSC / सेवा सेतु बोर्ड फोटो में दिखाई नहीं दे रहा">CSC / सेवा सेतु बोर्ड फोटो में दिखाई नहीं दे रहा</option>
+        <option value="निर्धारित ब्रांडिंग फॉर्मेट का पालन नहीं किया गया">निर्धारित ब्रांडिंग फॉर्मेट का पालन नहीं किया गया</option>
+        <option value="Other">Other</option>
       </select>
       <div id="otherReasonWrap" style="display:none">
         <label for="otherReasonInput" class="reject-field-label">Please specify *</label>
@@ -158,6 +228,132 @@
     let currentPage = 1;
     let totalPages = 1;
     let requestTimer = null;
+    let summaryRows = [];
+    let summaryTotals = {};
+    let summarySort = { key: 'achievement', direction: 'asc' };
+    function switchAdminTab(tab) {
+      const showQc = tab === 'qc';
+      document.getElementById('qcPanel').style.display = showQc ? 'block' : 'none';
+      document.getElementById('summaryPanel').style.display = showQc ? 'none' : 'block';
+      document.getElementById('qcTabButton').classList.toggle('active', showQc);
+      document.getElementById('summaryTabButton').classList.toggle('active', !showQc);
+      document.getElementById('qcTabButton').setAttribute('aria-selected', String(showQc));
+      document.getElementById('summaryTabButton').setAttribute('aria-selected', String(!showQc));
+      if (!showQc) loadSummary();
+    }
+
+    function formatNumber(value) { return Number(value || 0).toLocaleString('en-IN'); }
+    function sortSummary(key) {
+      if (summarySort.key === key) summarySort.direction = summarySort.direction === 'asc' ? 'desc' : 'asc';
+      else summarySort = { key: key, direction: key === 'district' || key === 'sn' ? 'asc' : 'desc' };
+      renderSummaryTable();
+    }
+    function exportSummaryExcel() {
+      if (!summaryRows.length) { alert('Summary report load hone ke baad export karein.'); return; }
+      const headers = ['SN','District','Total Target','Total Branding Done','Approved','Rejected','% Achievement'];
+      const rows = [summaryTotals].concat(summaryRows).map(function(row, index) {
+        return [index === 0 ? '' : index, index === 0 ? 'Total' : row.district, row.target, row.done, row.approved, row.rejected, Math.round(Number(row.achievement || 0)) + '%'];
+      });
+      const html = '<html><head><meta charset="UTF-8"></head><body><table border="1"><thead><tr>' + headers.map(function(h){return '<th>' + escapeHtml(h) + '</th>';}).join('') + '</tr></thead><tbody>' + rows.map(function(row){return '<tr>' + row.map(function(cell){return '<td>' + escapeHtml(cell) + '</td>';}).join('') + '</tr>';}).join('') + '</tbody></table></body></html>';
+      const blob = new Blob(['\ufeff', html], {type:'application/vnd.ms-excel;charset=utf-8'});
+      const link = document.createElement('a'); link.href = URL.createObjectURL(blob); link.download = 'Sewa_Setu_Branding_Summary.xls'; document.body.appendChild(link); link.click(); link.remove(); URL.revokeObjectURL(link.href);
+    }
+    function escapeHtml(value) { return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];}); }
+    function exportSummaryPdf() {
+      if (!summaryRows.length) { alert('Summary report load hone ke baad PDF export karein.'); return; }
+      window.print();
+    }
+    function achievementColor(value) {
+      const ratio = Math.max(0, Math.min(1, Number(value || 0) / 40));
+      return 'hsl(' + Math.round(ratio * 120) + ', 82%, 76%)';
+    }
+
+    function loadSummary() {
+      const area = document.getElementById('summaryArea');
+      const button = document.getElementById('summaryRefreshButton');
+      area.className = 'summary-loading';
+      area.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Loading summary…';
+      button.disabled = true;
+      loadJsonp({ action: 'qcSummary' }, function(data) {
+        button.disabled = false;
+        if (!data || !data.success) { area.className = 'summary-error'; area.textContent = (data && data.error) || 'Summary load nahi ho saka.'; return; }
+        renderSummary(data);
+      }, function() {
+        button.disabled = false; area.className = 'summary-error'; area.textContent = 'Backend se summary response nahi mila. Refresh karke dobara try karein.';
+      });
+    }
+
+    function renderSummary(data) {
+      const area = document.getElementById('summaryArea');
+      area.className = '';
+      area.replaceChildren();
+      summaryRows = (data.rows || []).slice();
+      summaryTotals = data.totals || {};
+      const cards = document.createElement('div'); cards.className = 'summary-kpis';
+      [
+        ['Total Target', summaryTotals.target],
+        ['Branding Done', summaryTotals.done],
+        ['Approved', summaryTotals.approved],
+        ['Rejected', summaryTotals.rejected],
+        ['Pending Review', summaryTotals.pending]
+      ].forEach(function(item) {
+        const card = document.createElement('div'); card.className = 'summary-kpi';
+        const label = document.createElement('span'); label.textContent = item[0];
+        const value = document.createElement('strong'); value.textContent = formatNumber(item[1]);
+        card.append(label, value); cards.appendChild(card);
+      });
+      const report = document.createElement('div'); report.className = 'report-card';
+      const title = document.createElement('div'); title.className = 'report-title'; title.textContent = 'Sewa Setu and CSC Common Branding Status';
+      const scroll = document.createElement('div'); scroll.className = 'report-scroll'; scroll.id = 'summaryTableWrap';
+      report.append(title, scroll);
+      area.append(cards, report);
+      renderSummaryTable();
+    }
+
+    function renderSummaryTable() {
+      const scroll = document.getElementById('summaryTableWrap');
+      if (!scroll) return;
+      scroll.replaceChildren();
+      const table = document.createElement('table'); table.className = 'report-table';
+      const columns = [
+        {key:'sn', label:'SN'}, {key:'district', label:'District'}, {key:'target', label:'Total Target'},
+        {key:'done', label:'Total Branding Done'}, {key:'approved', label:'Approved'},
+        {key:'rejected', label:'Rejected'}, {key:'achievement', label:'% Achievement'}
+      ];
+      const thead = document.createElement('thead'); const headerRow = document.createElement('tr');
+      columns.forEach(function(column) {
+        const th = document.createElement('th'); const button = document.createElement('button'); button.type = 'button'; button.className = 'sort-button';
+        button.setAttribute('aria-label', 'Sort by ' + column.label); button.onclick = function(){sortSummary(column.key);};
+        const label = document.createElement('span'); label.textContent = column.label;
+        const indicator = document.createElement('span'); indicator.className = 'sort-indicator'; indicator.textContent = summarySort.key === column.key ? (summarySort.direction === 'asc' ? '▲' : '▼') : '↕';
+        button.append(label, indicator); th.appendChild(button); headerRow.appendChild(th);
+      });
+      thead.appendChild(headerRow);
+      const tbody = document.createElement('tbody');
+      function addRow(row, isTotal, serial) {
+        const tr = document.createElement('tr'); if (isTotal) tr.className = 'total-row';
+        const achievement = Number(row.achievement || 0);
+        const values = [isTotal ? '' : serial, isTotal ? 'Total' : row.district, formatNumber(row.target), formatNumber(row.done), formatNumber(row.approved), formatNumber(row.rejected), Math.round(achievement) + '%'];
+        values.forEach(function(value, index) {
+          const td = document.createElement('td'); td.textContent = value;
+          if (index === 6 && !isTotal) { td.className = 'achievement-cell'; td.style.backgroundColor = achievementColor(achievement); }
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      }
+      addRow(summaryTotals, true, '');
+      const sorted = summaryRows.slice().sort(function(a, b) {
+        let av = summarySort.key === 'sn' ? summaryRows.indexOf(a) + 1 : a[summarySort.key];
+        let bv = summarySort.key === 'sn' ? summaryRows.indexOf(b) + 1 : b[summarySort.key];
+        if (summarySort.key === 'district') { av = String(av || '').toLocaleLowerCase(); bv = String(bv || '').toLocaleLowerCase(); }
+        else { av = Number(av || 0); bv = Number(bv || 0); }
+        const compare = av < bv ? -1 : (av > bv ? 1 : 0);
+        return summarySort.direction === 'asc' ? compare : -compare;
+      });
+      sorted.forEach(function(row, index){ addRow(row, false, index + 1); });
+      table.append(thead, tbody); scroll.appendChild(table);
+    }
+
     let selectedRejectRow = null;
     let selectedRejectCard = null;
 
