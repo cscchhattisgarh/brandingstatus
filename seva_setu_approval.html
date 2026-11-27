@@ -126,6 +126,14 @@
     .summary-loading,.summary-error { padding:40px 16px; border-radius:14px; color:#475569; text-align:center; font-weight:600; background:#fff; }
     @media(max-width:900px) { .summary-kpis { grid-template-columns:repeat(3,minmax(0,1fr)); } }
     @media(max-width:560px) { .summary-kpis { grid-template-columns:repeat(2,minmax(0,1fr)); } .admin-tab { font-size:.78rem; padding:9px 6px; } .summary-toolbar { align-items:flex-start; flex-direction:column; } .report-table th,.report-table td { padding:7px 8px; font-size:.76rem; } }
+    .summary-hero { margin-bottom:14px; padding:20px 22px; border:1px solid #dce9f0; border-left:5px solid #55a99b; border-radius:16px; text-align:center; background:linear-gradient(110deg,#fff 0%,#f0faf8 68%,#f2f6ff 100%); box-shadow:0 10px 25px rgba(66,105,130,.08); }
+    .summary-hero .eyebrow { margin:0 0 4px; color:#4c8ba8; font-size:1rem; font-weight:700; letter-spacing:.08em; }
+    .summary-hero h2 { margin:0; color:#294b63; font-size:clamp(1.8rem,4vw,2.55rem); font-weight:700; }
+    .summary-hero p:last-child { margin:8px 0 0; color:#607d8f; font-size:clamp(1rem,2vw,1.18rem); font-weight:500; }
+    body.summary-mode .topbar { display:none; }
+    body.summary-only { padding:20px 14px 35px; }
+    body.summary-only .page-shell { width:min(1320px,100%); }
+    body.summary-only .admin-tabs { display:none; }
     @media print {
       @page { size:landscape; margin:12mm; }
       body { padding:0; color:#111827; background:#fff; }
@@ -178,8 +186,12 @@
     </section>
 
     <section id="summaryPanel" style="display:none" aria-labelledby="summaryTabButton">
+      <header class="summary-hero">
+        <p class="eyebrow">Branding Progress Summary</p>
+        <h2>CSC &amp; Sewa Setu</h2>
+        <p>District-wise status of common branding work</p>
+      </header>
       <div class="summary-toolbar">
-        <p>District-wise branding progress; achievement is calculated as Approved ÷ Target.</p>
         <div class="summary-actions">
           <button id="exportExcelButton" class="summary-action primary" type="button" onclick="exportSummaryExcel()">↓ Export to Excel</button>
           <button class="summary-action" type="button" onclick="exportSummaryPdf()">▤ Export to PDF</button>
@@ -233,6 +245,7 @@
     let summarySort = { key: 'achievement', direction: 'asc' };
     function switchAdminTab(tab) {
       const showQc = tab === 'qc';
+      document.body.classList.toggle('summary-mode', !showQc);
       document.getElementById('qcPanel').style.display = showQc ? 'block' : 'none';
       document.getElementById('summaryPanel').style.display = showQc ? 'none' : 'block';
       document.getElementById('qcTabButton').classList.toggle('active', showQc);
@@ -537,7 +550,16 @@
       });
     }
 
-    window.onload = function() { loadPage(1); };
+    window.onload = function() {
+      if (new URLSearchParams(window.location.search).get('view') === 'summary') {
+        document.body.classList.add('summary-only', 'summary-mode');
+        document.getElementById('qcPanel').style.display = 'none';
+        document.getElementById('summaryPanel').style.display = 'block';
+        loadSummary();
+      } else {
+        loadPage(1);
+      }
+    };
   </script>
 </body>
 </html>
