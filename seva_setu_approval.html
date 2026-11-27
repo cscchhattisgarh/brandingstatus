@@ -219,10 +219,13 @@
       <label for="rejectReasonSelect" class="reject-field-label">Rejection reason *</label>
       <select id="rejectReasonSelect" class="reject-reason-select" onchange="toggleOtherReason()" required>
         <option value="">Select a reason</option>
-        <option value="ब्रांडिंग फोटो स्पष्ट नहीं है">ब्रांडिंग फोटो स्पष्ट नहीं है</option>
-        <option value="CSC / सेवा सेतु बोर्ड फोटो में दिखाई नहीं दे रहा">CSC / सेवा सेतु बोर्ड फोटो में दिखाई नहीं दे रहा</option>
-        <option value="निर्धारित ब्रांडिंग फॉर्मेट का पालन नहीं किया गया">निर्धारित ब्रांडिंग फॉर्मेट का पालन नहीं किया गया</option>
-        <option value="Other">Other</option>
+        <option value="दुकान के बाहर ब्रांडिंग नहीं लगाई गई है।">दुकान के बाहर ब्रांडिंग नहीं लगाई गई है।</option>
+        <option value="ब्रांडिंग लोहे के फ्रेम में नहीं लगाई गई है।">ब्रांडिंग लोहे के फ्रेम में नहीं लगाई गई है।</option>
+        <option value="ब्रांडिंग सेवा सेतु एवं CSC की संयुक्त (कॉमन) ब्रांडिंग नहीं है।">ब्रांडिंग सेवा सेतु एवं CSC की संयुक्त (कॉमन) ब्रांडिंग नहीं है।</option>
+      <option value="दुकान के ऊपर ब्रांडिंग नहीं लगाई गई है।">दुकान के ऊपर ब्रांडिंग नहीं लगाई गई है।</option>
+      <option value="आपने AI द्वारा तैयार किया गया फोटो अपलोड किया है।">आपने AI द्वारा तैयार किया गया फोटो अपलोड किया है।</option>
+      <option value="दुकान के बाहर ऊपर लोहे के फ्रेम में CSC एवं सेवा सेतु की संयुक्त ब्रांडिंग नहीं लगाई गई है।">दुकान के बाहर ऊपर लोहे के फ्रेम में CSC एवं सेवा सेतु की संयुक्त ब्रांडिंग नहीं लगाई गई है।</option>
+        <option value="अन्य">अन्य</option>
       </select>
       <div id="otherReasonWrap" style="display:none">
         <label for="otherReasonInput" class="reject-field-label">Please specify *</label>
@@ -385,7 +388,7 @@
     }
 
     function toggleOtherReason() {
-      const isOther = document.getElementById('rejectReasonSelect').value === 'Other';
+      const isOther = document.getElementById('rejectReasonSelect').value === 'अन्य';
       document.getElementById('otherReasonWrap').style.display = isOther ? 'block' : 'none';
       document.getElementById('otherReasonInput').required = isOther;
     }
@@ -395,7 +398,7 @@
       const otherInput = document.getElementById('otherReasonInput');
       if (!reason) { document.getElementById('rejectReasonSelect').reportValidity(); return; }
       let remark = reason;
-      if (reason === 'Other') {
+      if (reason === 'अन्य') {
         remark = otherInput.value.trim();
         if (!remark) { otherInput.setCustomValidity('Rejection remark likhein.'); otherInput.reportValidity(); otherInput.setCustomValidity(''); return; }
       }
